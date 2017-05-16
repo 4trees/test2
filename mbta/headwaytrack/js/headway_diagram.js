@@ -90,9 +90,10 @@ function launchIntoFullscreen(element) {
   }
 }
 
-document.querySelector('body').addEventListener('click',function(d){
+document.querySelector('body').addEventListener('click',function(e){
+
 	if(!isFullscreen){
-		launchIntoFullscreen(document.querySelector('body')); // the whole page
+		launchIntoFullscreen(document.documentElement); // the whole page
 	}
 })
 
