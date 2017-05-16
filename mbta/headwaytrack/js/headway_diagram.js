@@ -11,9 +11,9 @@ var plot = d3.select('svg')
 
 var leftLocation = w*.37;
 var rightLocation = w*.63;
-var bindWidth = w*.03;
-var interval = 100;
-var vehicleSize = 2;
+var bindWidth = w*.03; // for each track
+var interval = 100; // for each stop
+var vehicleSize = 28;
 var windowHeight = document.body.clientHeight;
 
 

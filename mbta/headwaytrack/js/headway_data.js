@@ -271,10 +271,10 @@ var enter = update.enter()
 	})
 enter.append('svg:image')
 	.attr("xlink:href","images/yellow-train.png")
-	.attr('width', vehicleSize + 'em')
-    .attr('height', vehicleSize + 'em')
-    .attr('x',-vehicleSize/2 + 'em')
-    .attr('y',-vehicleSize/2 + 'em')
+	.attr('width', vehicleSize)
+    .attr('height', vehicleSize)
+    .attr('x',-vehicleSize/2)
+    .attr('y',-vehicleSize/2)
 enter.append('text').text(function(d){return d.attributes.label})
 	.attr('class','vehicleNum')
 
@@ -299,7 +299,7 @@ update.merge(enter)
 		return 'translate(' + (X + offsetX) + ',' + (Y + offsetY) + ')';
 	})
 	.select('text')
-	.attr('x',function(d){return (d.attributes.direction_id == 0? -1 : 1) * 15})
+	.attr('x',function(d){return (d.attributes.direction_id == 0? -1 : 1) * vehicleSize / 2})
 	.style('text-anchor',function(d){return d.attributes.direction_id == 0? 'end' : 'start'})
 
 update.exit().remove();
@@ -336,10 +336,10 @@ allLocation.values().forEach(function(location){
 			console.log(locationdata[0],locationdata[1],locationdata[2])
 			multiIcon.append('svg:image')
 				.attr("xlink:href","images/yellow-train.png")
-				.attr('width', vehicleSize + 'em')
-			    .attr('height', vehicleSize + 'em')
-			    .attr('x', ((locationdata[2] == 0? -1 : 1) * i * vehicleSize - vehicleSize / 2) + 'em')
-			    .attr('y', -vehicleSize / 2 + 'em')
+				.attr('width', vehicleSize)
+			    .attr('height', vehicleSize)
+			    .attr('x', (locationdata[2] == 0? -1 : 1) * i * vehicleSize - vehicleSize / 2)
+			    .attr('y', -vehicleSize / 2)
 		}	
 	}
 })

@@ -10,7 +10,7 @@ body{
 	width:100%;
 	height:auto;
 	vertical-align: middle;
-	font-size:1.3em;
+	font-size:18px;
 }
 h1,h2,h3,h4,h5{
 	margin-top: 0;
@@ -86,18 +86,18 @@ h1,h2,h3,h4,h5{
 	margin-bottom: 2em;
 }
 .nowTime{
-	font-size:1.8em;
+	font-size:180%;
 }
 #timerBar{
 	z-index: 3;
     top:0;
-    height: 5em;
+    min-height: 5em;
 }
 .textIntimerBar{
 	line-height: 5em;
 }
 .nav {
-	font-size: 1.8em;
+	font-size: 180%;
 }
 #detailBox.openBox,#vehicleBox.openBox{
 	top :5em ;
@@ -182,15 +182,17 @@ hr.arrivals {
 	position: fixed;
 	width: 100%;
 }
-.arrivalTime{
-	font-size:1.8em;
+p #nextArrivals{
 	margin:0;
+}
+.arrivalTime{
+	font-size:130%;
 }
 .vehicleCode{
 	background: #666;
 	padding: 2px 5px;
 	border-radius: 4px;
-	font-size: 80%;
+	font-size: 90%;
 }
 
 /*end new arrival section */
