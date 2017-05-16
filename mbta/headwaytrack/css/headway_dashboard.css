@@ -86,7 +86,7 @@ h1,h2,h3,h4,h5{
 	margin-bottom: 2em;
 }
 .nowTime{
-	font-size:1.5em;
+	font-size:1.8em;
 }
 #timerBar{
 	z-index: 3;
@@ -184,7 +184,7 @@ hr.arrivals {
 	width: 100%;
 }
 .arrivalTime{
-	font-size:1.2em;
+	font-size:1.8em;
 }
 .vehicleCode{
 	background: #666;
