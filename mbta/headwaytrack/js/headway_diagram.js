@@ -35,6 +35,7 @@ var isOpen = false;
 var isAlert = false;
 var isVehicle = false;
 var isDismiss = false;
+var isFullscreen = false;
 
 alertBt.addEventListener("click", function(){showDetail(alertCT)} );
 searchBt.addEventListener("click", function(){showDetail(searchCT)} );
@@ -89,4 +90,9 @@ function launchIntoFullscreen(element) {
   }
 }
 
-launchIntoFullscreen(document.querySelector('body')); // the whole page
+document.querySelector('body').addEventListener('click',function(d){
+	if(!isFullscreen){
+		launchIntoFullscreen(document.querySelector('body')); // the whole page
+	}
+})
+
