@@ -32,7 +32,7 @@ h1,h2,h3,h4,h5{
 #canvas{
     width:100%;
     margin: 0 auto;
-    height: 2600px;
+    height: 2650px;
 }
 .triangle{
 	fill:none;
@@ -86,18 +86,15 @@ h1,h2,h3,h4,h5{
 	margin-bottom: 2em;
 }
 .nowTime{
-	font-size:180%;
+	font-size:130%;
 }
 #timerBar{
 	z-index: 3;
     top:0;
-    min-height: 5em;
-}
-.textIntimerBar{
-	line-height: 5em;
+    padding: 10px;
 }
 .nav {
-	font-size: 180%;
+	font-size: 130%;
 }
 #detailBox.openBox,#vehicleBox.openBox{
 	top :5em ;

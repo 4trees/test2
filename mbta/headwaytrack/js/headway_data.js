@@ -1,5 +1,5 @@
 //scroll the page to Riverside stop when load the page.
-window.onload = function(){setTimeout(function(){window.scrollTo(0,2500)},10);}
+window.onload = function(){setTimeout(function(){window.scrollTo(0,2650)},10);}
 
 // URL globals
 stopsurl = "https://api.mbtace.com/stops?route=Green-D";
