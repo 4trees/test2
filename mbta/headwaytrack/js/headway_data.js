@@ -1,5 +1,5 @@
 //scroll the page to Riverside stop when load the page.
-window.onload = function(){setTimeout(function(){window.scrollTo(0,2650)},10);}
+window.onload = function(){setTimeout(function(){window.scrollTo(0,2000)},10);}
 
 // URL globals
 stopsurl = "https://api.mbtace.com/stops?route=Green-D";
@@ -261,7 +261,7 @@ var enter = update.enter()
 			//check if the train is turning around at a terminal stop
 			var ifToTerminal = terminals.find(function(t){return t.stop_id == d.relationships.stop.data.id})
 			if(ifToTerminal && (ifToTerminal.direction_id != d.attributes.direction_id)){
-				offsetY = interval * (d.attributes.direction_id ? -1 : 1) * .15;
+				offsetY = interval * (d.attributes.direction_id ? -1 : 1) * .45;
 				offsetX = (d.attributes.direction_id ? -1 : 1) * ((rightLocation - leftLocation) / 2 + 3 * bindWidth);
 			}else{
 				offsetY = (d.attributes.direction_id? 1 : -1) * interval / 2;
@@ -290,7 +290,7 @@ update.merge(enter)
 			//check if the train is turning around at a terminal stop
 			var ifToTerminal = terminals.find(function(t){return t.stop_id == d.relationships.stop.data.id})
 			if(ifToTerminal && (ifToTerminal.direction_id != d.attributes.direction_id)){
-				offsetY = interval * (d.attributes.direction_id ? -1 : 1) * .2;
+				offsetY = interval * (d.attributes.direction_id ? -1 : 1) * .45;
 				offsetX = (d.attributes.direction_id ? -1 : 1) * ((rightLocation - leftLocation) / 2 + 3 * bindWidth);
 			}else{
 				offsetY = (d.attributes.direction_id? 1 : -1) * interval / 2;

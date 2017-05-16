@@ -15,9 +15,15 @@ body{
 h1,h2,h3,h4,h5{
 	margin-top: 0;
 }
-@media  only screen and (min-device-pixel-ratio: 2) {
+@media only screen
+	and (max-device-width:768px) 
+	and (orientation : landscape) 
+	and (-webkit-min-device-pixel-ratio: 2),
+    and ( min--moz-device-pixel-ratio: 2),
+    and ( -o-min-device-pixel-ratio: 2/1),
+    and ( min-device-pixel-ratio: 2){
   body{
-  	font-size:12px;
+  	font-size:14px;
   }
 }
 .container-fluid{
@@ -37,7 +43,7 @@ h1,h2,h3,h4,h5{
 #canvas{
     width:100%;
     margin: 0 auto;
-    height: 2650px;
+    height: 2000px;
 }
 .triangle{
 	fill:none;
@@ -102,7 +108,7 @@ h1,h2,h3,h4,h5{
 	font-size: 130%;
 }
 #detailBox.openBox,#vehicleBox.openBox{
-	top :5em ;
+	top :3em ;
 }
 .showDetail{
 	display: block !important;

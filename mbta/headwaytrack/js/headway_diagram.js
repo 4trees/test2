@@ -1,4 +1,4 @@
-var m = {t:50,r:50,b:50,l:50},
+var m = {t:70,r:50,b:50,l:50},
     w = document.getElementById('canvas').clientWidth,
     h = document.getElementById('canvas').clientHeight;
 console.log(w,h)
@@ -6,13 +6,13 @@ var plot = d3.select('svg')
     // .append('svg')
     .attr('width', w)
     .attr('height', h - m.t - m.b)
-    .attr('transform','translate('+ 0+','+ m.t/2+')');
+    .attr('transform','translate('+ 0+','+ m.t+')');
 
 
 var leftLocation = w*.37;
 var rightLocation = w*.63;
 var bindWidth = w*.03; // for each track
-var interval = 100; // for each stop
+var interval = 70; // for each stop
 var vehicleSize = 28;
 var windowHeight = document.body.clientHeight;
 
