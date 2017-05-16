@@ -91,7 +91,6 @@ function launchIntoFullscreen(element) {
 }
 
 document.querySelector('body').addEventListener('click',function(e){
-
 	if(!isFullscreen){
 		launchIntoFullscreen(document.documentElement); // the whole page
 	}

@@ -72,7 +72,7 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 						}else if(getServerResult.length == 1){
 							var line = getServerResult[0].relationships.route.data.id;
 							var direction = getServerResult[0].attributes.direction_id ? 'westbound' : 'eastbound';
-							var status = getServerResult[0].attributes.current_status == 'INCOMING_AT'? 'to ' : 'approaching ';
+							var status = getServerResult[0].attributes.current_status == 'INCOMING_AT'? 'approaching ' : 'at ';
 							var station = getStops.find(function(d){return d.id == getServerResult[0].relationships.stop.data.id}).attributes.name;
 							d3.select('#searchRT').html('<hr><p class=\'lead\'>Train ' + searchValue + ' is on ' + line + ' ' + direction + ' ' + status + ' ' + station + '.</p>')
 						}else{
