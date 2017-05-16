@@ -376,7 +376,7 @@ function showArrivalVehicles(data,allStops){
 		document.querySelector('#arrivalLocation').innerHTML = 
 			nextarrivals.map(function(arrival) {
 			var name = allStops.find(function(d){return d.id == arrival.parent_station.id}).name;
-    		return  '<div class=\"col-xs-4 col-sm-4 col-md-4 col-lg-4\"><p><span class=\"text-darker\">' + (arrival.attributes.current_status == 'INCOMING_AT'? 'to ' : 'approaching ' ) + '</span><span>' + name + '</span></p></div>'
+    		return  '<div class=\"col-xs-4 col-sm-4 col-md-4 col-lg-4\"><p><span class=\"text-darker\">' + (arrival.attributes.current_status == 'INCOMING_AT'? 'approaching ' : 'at ' ) + '</span><span>' + name + '</span></p></div>'
     	}).join('');
 	}
 }

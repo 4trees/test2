@@ -10,7 +10,7 @@ body{
 	width:100%;
 	height:auto;
 	vertical-align: middle;
-	font-size:1.1em;
+	font-size:1.3em;
 }
 h1,h2,h3,h4,h5{
 	margin-top: 0;
@@ -173,7 +173,6 @@ h1,h2,h3,h4,h5{
 /* new arrival section */
 #nextArrivals{
 	bottom:0;
-    height: 9em;
 }
 hr.arrivals {
 	background-color: #fff;
@@ -191,6 +190,7 @@ hr.arrivals {
 	background: #666;
 	padding: 2px 5px;
 	border-radius: 4px;
+	font-size: 80%;
 }
 
 /*end new arrival section */
