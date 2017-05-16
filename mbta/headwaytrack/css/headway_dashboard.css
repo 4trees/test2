@@ -15,13 +15,14 @@ body{
 h1,h2,h3,h4,h5{
 	margin-top: 0;
 }
-@media only screen
-	and (max-device-width:768px) 
-	and (orientation : portrait) 
-	and (-webkit-min-device-pixel-ratio: 2),
-    and ( min--moz-device-pixel-ratio: 2),
-    and ( -o-min-device-pixel-ratio: 2/1),
-    and ( min-device-pixel-ratio: 2){
+@media only screen 
+    and (min-device-width : 414px) 
+    and (max-device-width : 736px)
+    and (device-width : 414px)
+    and (device-height : 736px)
+    and (orientation : portrait) 
+    and (-webkit-min-device-pixel-ratio : 3) 
+    and (-webkit-device-pixel-ratio : 3){
   body{
   	font-size:14px;
   }
