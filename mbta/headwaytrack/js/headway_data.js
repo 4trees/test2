@@ -7,7 +7,7 @@ vehiclesurl = "https://api.mbtace.com/vehicles?route=Green-D&include=stop";
 predictionsurl = "https://api.mbtace.com/predictions?route=Green-D";
 tripsurl = "https://api.mbtace.com/trips?route=Green-D";
 alerturl = "https://api.mbtace.com/alerts?route=Green-D";
-allvehicleurl = "https://api.mbtace.com/vehicles?route=Green-B,Green-C,Green-D,Green-E";
+allvehicleurl = "https://api.mbtace.com/vehicles?route=Green-B,Green-C,Green-D,Green-E&include=stop";
 
 
 var app = angular.module('hdwyApp', []);
@@ -65,11 +65,16 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 					//search on server
 					$http.get(allvehicleurl)
 					.then(function(response) {
+						var getStops = response.data.included;
 						var getServerResult = response.data.data.filter(function(d){return d.attributes.label.includes(searchValue)})
 						if(getServerResult.length == 0){
-							d3.select('#searchRT').html('<hr><p class=\'lead\'>Train ' + searchValue +  ' is not listed in Green lines.</p>')
+							d3.select('#searchRT').html('<hr><p class=\'lead\'>Car ' + searchValue +  ' is not being tracked by the real-time system.</p>')
 						}else if(getServerResult.length == 1){
-							d3.select('#searchRT').html('<hr><p class=\'lead\'>Train ' + searchValue + ' is on ' + getServerResult[0].relationships.route.data.id + '.</p>')
+							var line = getServerResult[0].relationships.route.data.id;
+							var direction = getServerResult[0].attributes.direction_id ? 'westbound' : 'eastbound';
+							var status = getServerResult[0].attributes.current_status == 'INCOMING_AT'? 'to ' : 'approaching ';
+							var station = getStops.find(function(d){return d.id == getServerResult[0].relationships.stop.data.id}).attributes.name;
+							d3.select('#searchRT').html('<hr><p class=\'lead\'>Train ' + searchValue + ' is on ' + line + ' ' + direction + ' ' + status + ' ' + station + '.</p>')
 						}else{
 							d3.select('#searchRT').html('<hr><p class=\'lead\'>Data error: Train ' + searchValue + ' is listed in more than one place.</p>')
 						}
@@ -105,10 +110,10 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 			$scope.predictions = $scope.allPredictions.sort(function(a,b){
        				return b.attributes.arrival_time - a.attributes.arrival_time; // sort by arrival time
     			})
-    			.slice(0,3);//get first 3 new arrivals
+    			.slice(0,3);//get first 3 next arrivals
 			$scope.arrivalTripId = getTripId($scope.predictions)
 
-			//show first three time on NEW ARRIVALS section
+			//show first three time on NEXT ARRIVALS section
 			$scope.vehicles.forEach(function(vehicle){
 				var arrivalTime = $scope.allPredictions.find(function(d){return d.relationships.trip.data.id == vehicle.relationships.trip.data.id})
 				if(arrivalTime){
@@ -351,27 +356,27 @@ function showVehicle(data){
 	isVehicle = true;
 }
 
-//show the new arrivals' vehicle label and location
+//show the next arrivals' vehicle label and location
 function showArrivalVehicles(data,allStops){
 	if(data != '' && allStops != ''){
-		var newarrivals = data.filter(function(d){return d.arrival_time})
+		var nextarrivals = data.filter(function(d){return d.arrival_time})
 				.sort(function(a,b){
        				return a.arrival_time - b.arrival_time; // sort by arrival time
     			})
-    			.slice(0,3);//get first 3 new arrivals
+    			.slice(0,3);//get first 3 next arrivals
 		document.querySelector('#arrivalTime').innerHTML = 
-			newarrivals.map(function(arrival) {
+			nextarrivals.map(function(arrival) {
 			var time = getTime(arrival.arrival_time);
     		return '<div class=\"col-xs-4 col-sm-4 col-md-4 col-lg-4\"><p class=\"arrivalTime\">' + time[0] + '<span class=\"ap\">' + time[1] + '</span></p></div>';
     	}).join('');
 		document.querySelector('#arrivalVehicle').innerHTML =
-			'<hr class="arrivals">' + newarrivals.map(function(arrival) {
+			'<hr class="arrivals">' + nextarrivals.map(function(arrival) {
     		return '<div class=\"col-xs-4 col-sm-4 col-md-4 col-lg-4\"><p><span class=\"vehicleCode\">' + arrival.attributes.label + '</span></p></div>'
     	}).join('');
 		document.querySelector('#arrivalLocation').innerHTML = 
-			newarrivals.map(function(arrival) {
+			nextarrivals.map(function(arrival) {
 			var name = allStops.find(function(d){return d.id == arrival.parent_station.id}).name;
-    		return  '<div class=\"col-xs-4 col-sm-4 col-md-4 col-lg-4\"><p><span class=\"text-darker\">' + (arrival.attributes.current_status == 'INCOMING_AT'? 'to ' : 'at ' ) + '</span><span>' + name + '</span></p></div>'
+    		return  '<div class=\"col-xs-4 col-sm-4 col-md-4 col-lg-4\"><p><span class=\"text-darker\">' + (arrival.attributes.current_status == 'INCOMING_AT'? 'to ' : 'approaching ' ) + '</span><span>' + name + '</span></p></div>'
     	}).join('');
 	}
 }

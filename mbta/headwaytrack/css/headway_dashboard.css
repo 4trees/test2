@@ -67,7 +67,7 @@ h1,h2,h3,h4,h5{
 /* end main diagram */
 
 /* top bar section */
-#timerBar,#newArrivals,#detailBox,#vehicleBox{
+#timerBar,#nextArrivals,#detailBox,#vehicleBox{
 	width: 100%;
 	background-color:rgba(0,0,0,0.9);
     position: fixed;
@@ -171,7 +171,7 @@ h1,h2,h3,h4,h5{
 /* end top bar section*/
 
 /* new arrival section */
-#newArrivals{
+#nextArrivals{
 	bottom:0;
     height: 9em;
 }
@@ -185,6 +185,7 @@ hr.arrivals {
 }
 .arrivalTime{
 	font-size:1.8em;
+	margin:0;
 }
 .vehicleCode{
 	background: #666;
