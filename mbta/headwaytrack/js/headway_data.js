@@ -2,12 +2,12 @@
 window.onload = function(){setTimeout(function(){window.scrollTo(0,2500)},10);}
 
 // URL globals
-stopsurl = "http://api.mbtace.com/stops?route=Green-D";
-vehiclesurl = "http://api.mbtace.com/vehicles?route=Green-D&include=stop";
-predictionsurl = "http://api.mbtace.com/predictions?route=Green-D";
-tripsurl = "http://api.mbtace.com/trips?route=Green-D";
-alerturl = "http://api.mbtace.com/alerts?route=Green-D";
-allvehicleurl = "http://api.mbtace.com/vehicles?route=Green-B,Green-C,Green-D,Green-E";
+stopsurl = "https://api.mbtace.com/stops?route=Green-D";
+vehiclesurl = "https://api.mbtace.com/vehicles?route=Green-D&include=stop";
+predictionsurl = "https://api.mbtace.com/predictions?route=Green-D";
+tripsurl = "https://api.mbtace.com/trips?route=Green-D";
+alerturl = "https://api.mbtace.com/alerts?route=Green-D";
+allvehicleurl = "https://api.mbtace.com/vehicles?route=Green-B,Green-C,Green-D,Green-E";
 
 
 var app = angular.module('hdwyApp', []);
