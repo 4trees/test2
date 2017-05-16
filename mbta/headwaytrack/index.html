@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="../../thirdparty/bootstrap-3.3.5/bootstrap.min.css" >
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="css/headway_dashboard.css">
+	<script src="../../thirdparty/angular-1.4.8/angular.min.js"></script>
+	<script src="js/headway_terminals.js"></script>
+	<script src="js/headway_data.js"></script>
+
+</head>
+<body>
+
+<div class="container-fluid" ng-app="hdwyApp" ng-controller="hdwyCtrl">
+	<div class="row">
+		<section class="canvas" id="canvas">
+			<svg>
+				<g class="lineContainer"></g>
+				<g class="vehicleContainer"></g>
+			</svg>
+		</section>
+	</div>
+	<div class="row textIntimerBar" id="timerBar">
+		<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+			<div id="search" class="text-center nav">
+				<i class="fa fa-search " aria-hidden="true"></i>
+			</div>
+		</div>
+		<div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"">
+			<div id="alerts" class="text-center nav">
+				<div class="alertImg"></div>
+			</div>
+		</div>
+		<div class="col-xs-8 col-sm-8 col-md-8 col-lg-8" >
+			<div class="row">
+				<div class="col-xs-7 col-sm-7 col-md-6 col-lg-6 text-center">
+					<p class="nowTime"><span class="ap text-darker hidden-xs hidden-sm">NOW&nbsp;&nbsp;&nbsp;&nbsp;</span><span id='nowTime'></span>
+					<span id="ap" class="ap"></span></p>
+				</div>
+				<div id="station" data-station=70161 data-direction=1 class="col-xs-5 col-sm-5 col-md-6 col-lg-6"><p class="text-center text-darker nav">Riverside</p></div>
+			</div>
+		</div>
+	</div>
+	<div class="row text-center" id="newArrivals">
+		<div class="row"><p>New arrivals</p></div>
+		<div class="row" id="arrivalTime"></div>
+		<div class="row" id="arrivalVehicle"></div>
+		<div class="row" id="arrivalLocation"></div>
+	</div>
+	<div class="row" id="vehicleBox">
+		<div id="vehicleDetail"></div>
+		<div class="row text-center text-darker close"><i class="fa fa-angle-double-up" aria-hidden="true"></i></div>
+	</div>	
+	<div class="row" id="detailBox">
+		<div class="content scrollbar scroll" id="alertDetail"></div>
+		<div class="content scrollbar scroll" id="searchDetail">
+			<form>
+				<input class="searchInput" type="tel" name="searchPad" placeholder="train #" value="3">
+				<button class="searchButton" type="submit">Search</button>
+			</form>
+			<p id="searchRT"></p>
+		</div>
+		<div class="row text-center text-darker close"><i class="fa fa-angle-double-up" aria-hidden="true"></i></div>
+	</div>
+	<div class="row dismiss hidden"></div>
+</div>
+	<script src="../../thirdparty/jquery-1.11.3.min.js"></script>
+	<script src="../../thirdparty/bootstrap-3.3.5/bootstrap.min.js"></script>
+	<script src="../../thirdparty/d3.min.js"></script>
+	<script src="js/headway_diagram.js"></script>
+</body>
+</html>

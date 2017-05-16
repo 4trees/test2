@@ -1,0 +1,213 @@
+html{
+	margin:0 auto;/* Center on the page */
+	width:100%;
+	height:100%;
+}
+body{
+	background-color: #333;
+	color: #FFF;
+	margin:0 auto;/* Center on the page */
+	width:100%;
+	height:100%;
+	vertical-align: middle;
+	font-size:1.1em;
+}
+h1,h2,h3,h4,h5{
+	margin-top: 0;
+}
+.container-fluid{
+	height: 100%;
+	width: 100%;
+}
+
+.ap{
+	font-size: 60%;
+}
+
+.text-darker{
+	opacity: .6;
+}
+
+/* main diagram */
+#canvas{
+    width:100%;
+    margin: 0 auto;
+    height: 2600px;
+}
+.triangle{
+	fill:none;
+	stroke-width:2px;
+	stroke:#333;
+	opacity: .3; 
+}
+.middleStop{
+	stroke-width:3px;
+	stroke: #333;
+	fill:#fff;
+}
+.terminalStop{
+	stroke-width:5px;
+	stroke: #009966; /* Green */
+	fill:#fff;
+}
+.bind{
+	fill:#009966;
+}
+.stationName{
+	fill:#fff;
+	size:1em;
+	text-anchor: middle;
+	alignment-baseline:middle;
+}
+.vehicleNum{
+	/*fill:#FFD852;  Yellow */
+	fill:#FBB03B; /* Orange */
+	alignment-baseline: middle;
+}
+/* end main diagram */
+
+/* top bar section */
+#timerBar,#newArrivals,#detailBox,#vehicleBox{
+	width: 100%;
+	background-color:rgba(0,0,0,0.9);
+    position: fixed;
+}
+#detailBox,#vehicleBox{
+	top:-300px;
+	height: auto;
+	padding: 2em 1.5em .5em 1.5em;
+	transition: top 1s;
+	z-index: 2;
+}
+.content{
+	overflow-y: scroll;
+	overflow-x: hidden;
+	max-height: 350px;
+	margin-bottom: 2em;
+}
+.nowTime{
+	font-size:1.3em;
+}
+#timerBar{
+	z-index: 3;
+    top:0;
+    height: 5em;
+}
+.textIntimerBar{
+	line-height: 5em;
+}
+.nav {
+	font-size: 1.8em;
+}
+#detailBox.openBox,#vehicleBox.openBox{
+	top :5em ;
+}
+.showDetail{
+	display: block !important;
+}
+#alertDetail, #searchDetail{
+	display: none;
+}
+#searchDetail hr{
+	border:1px #333 dotted;
+}
+#searchRT{
+	font-size:1.2em;
+}
+.searchButton{
+	background: #333;
+	color: #fff;
+	border:1px solid #333;
+	padding: 5px 15px;
+}
+.searchInput{
+	background: transparent;
+	border:1px #333 solid;
+	color:#fff;
+	padding: 5px 15px;
+	font-size:1.5em;
+	margin-right: 1em;
+}
+.highlight{
+	fill:#333;
+	stroke-width: .5;
+	stroke:#333;
+}
+.highlightBG{	
+	/*fill:#FFD852;  Yellow */
+	fill:#FBB03B; /* Orange */
+}
+
+.alertImg{
+	height: 2.5em;
+	width: 2.5em;
+}
+.alertTitle{
+	/*color:#FFD852;  Yellow */
+	color:#FBB03B; /* Orange */
+	margin-top: 2.6em;
+}
+.viewMore{
+	padding-bottom: .35em;
+}
+.viewMore a{
+	color:#fff;
+	font-size: 120%;
+	cursor: pointer;
+}
+/* close */
+.close{
+	font-size: 180%;
+	width: 100%;
+}
+.dismiss{
+	width: 100%;
+	height:100%;
+	background: transparent;
+	z-index: 1;
+	top:0;
+	position: fixed;
+}
+/* end top bar section*/
+
+/* new arrival section */
+#newArrivals{
+	bottom:0;
+    height: 9em;
+}
+hr.arrivals {
+	background-color: #fff;
+	margin-top: .5em;
+	margin-left: 15%; 
+	border-top: 2px solid #009966; /* Green */
+	position: fixed;
+	width: 100%;
+}
+.vehicleCode{
+	background: #666;
+	padding: 2px 5px;
+	border-radius: 4px;
+}
+
+/*end new arrival section */
+
+ /*scroll bar */
+.scrollbar{
+	float: left;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+.scroll::-webkit-scrollbar-track{
+	background-color: transparent;
+}
+
+.scroll::-webkit-scrollbar{
+	width: 3px;
+}
+
+.scroll::-webkit-scrollbar-thumb{
+	background-color:#666;
+	opacity: .6
+	border:none;
+}
+
