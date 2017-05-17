@@ -52,7 +52,7 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 			drawVehicles($scope.vehicles)
 			replaceMultiVehicles($scope.vehicles)
 			// var hehe = Math.random() < 0.5 ? 0:1;
-			// console.log(test[hehe])
+			// console.log(hehe)
 			// drawVehicles(test[hehe] )
 			// replaceMultiVehicles(test[hehe])
 
@@ -245,26 +245,27 @@ function drawVehicles(data){
 vehicles.selectAll('.multiple').remove()
 vehicles.selectAll('.vehicle').classed('hidden',false)
 var update = vehicles.selectAll('.vehicle')
-	.data(data,function(d){return d.id})
+	.data(data,function(d){console.log(d.id);return d.id})
 
 var enter = update.enter()
 	.append('g')
 	.attr('class','vehicle')
 	.attr('id',function(d){return 'train' + d.id})
+	.attr('data-location',function(d){return d.attributes.current_status + '-' + d.relationships.stop.data.id + '-' + d.attributes.direction_id})
 	.on('click',function(d){var n = [];n[0] = d;return showVehicle(n)})
 	.attr('transform',function(d){
 		var station = getXYFromTranslate(d3.select('.'+d.parent_station.id)._groups[0][0]);
 		var Y = station[1];
-		var X = d.attributes.direction_id? (rightLocation + 2 * bindWidth) : (leftLocation - 1 * bindWidth);
+		var X = d.attributes.direction_id == 1 ? (rightLocation + 2 * bindWidth) : (leftLocation - 1 * bindWidth);
 		var offsetY = offsetX = 0;
 		if(d.attributes.current_status == 'INCOMING_AT'){
 			//check if the train is turning around at a terminal stop
 			var ifToTerminal = terminals.find(function(t){return t.stop_id == d.relationships.stop.data.id})
 			if(ifToTerminal && (ifToTerminal.direction_id != d.attributes.direction_id)){
-				offsetY = interval * (d.attributes.direction_id ? -1 : 1) * .45;
-				offsetX = (d.attributes.direction_id ? -1 : 1) * ((rightLocation - leftLocation) / 2 + 3 * bindWidth);
+				offsetY = interval * (d.attributes.direction_id == 1? -1 : 1) * .45;
+				offsetX = (d.attributes.direction_id == 1 ? -1 : 1) * ((rightLocation - leftLocation) / 2 + 3 * bindWidth);
 			}else{
-				offsetY = (d.attributes.direction_id? 1 : -1) * interval / 2;
+				offsetY = (d.attributes.direction_id == 1 ? 1 : -1) * interval / 2;
 			}
 		}
 		return 'translate(' + (X + offsetX) + ',' + (Y + offsetY) + ')';
@@ -284,16 +285,17 @@ update.merge(enter)
 	.attr('transform',function(d){
 		var station = getXYFromTranslate(d3.select('.' + d.parent_station.id)._groups[0][0]);
 		var Y = station[1];
-		var X = d.attributes.direction_id? (rightLocation + 2 * bindWidth) : (leftLocation - 1 * bindWidth);
+		var X = d.attributes.direction_id == 1? (rightLocation + 2 * bindWidth) : (leftLocation - 1 * bindWidth);
+		console.log(X)
 		var offsetY = offsetX = 0;
 		if(d.attributes.current_status == 'INCOMING_AT'){
 			//check if the train is turning around at a terminal stop
 			var ifToTerminal = terminals.find(function(t){return t.stop_id == d.relationships.stop.data.id})
 			if(ifToTerminal && (ifToTerminal.direction_id != d.attributes.direction_id)){
-				offsetY = interval * (d.attributes.direction_id ? -1 : 1) * .45;
-				offsetX = (d.attributes.direction_id ? -1 : 1) * ((rightLocation - leftLocation) / 2 + 3 * bindWidth);
+				offsetY = interval * (d.attributes.direction_id == 1 ? -1 : 1) * .45;
+				offsetX = (d.attributes.direction_id == 1? -1 : 1) * ((rightLocation - leftLocation) / 2 + 3 * bindWidth);
 			}else{
-				offsetY = (d.attributes.direction_id? 1 : -1) * interval / 2;
+				offsetY = (d.attributes.direction_id == 1? 1 : -1) * interval / 2;
 			}
 		}
 		return 'translate(' + (X + offsetX) + ',' + (Y + offsetY) + ')';
@@ -317,10 +319,9 @@ data.forEach(function(vehicle){
     }
 })
 allLocation.values().forEach(function(location){
-	var findMulti = document.querySelectorAll('[data-location=' + location + ']')
-	console.log(findMulti.length)
-	if(findMulti.length > 1){
-		var count = findMulti.length
+	var findMulti = Array.from(document.querySelectorAll('[data-location=' + location + ']'))
+	var count = findMulti.length
+	if(count > 1){		
 		var locationdata = location.split('-')
 		var multidata = data.filter(function(d){return (d.attributes.current_status == locationdata[0]) && (d.relationships.stop.data.id == locationdata[1]) && (d.attributes.direction_id == locationdata[2])})
 		//hidden the multiple trains
@@ -330,10 +331,9 @@ allLocation.values().forEach(function(location){
 		//show multiicon
 		var multiIcon = vehicles.append('g')
 			.attr('id',location).attr('class','multiple')
-			.attr('transform','translate(' + getXYFromTranslate(findMulti[0])[0] + ',' + getXYFromTranslate(findMulti[0])[1] + ')')
+			.attr('transform','translate(' + getXYFromTranslate(findMulti[1])[0] + ',' + getXYFromTranslate(findMulti[1])[1] + ')')
 			.on('click',function(){showVehicle(multidata)})
 		for(i = 0; i < count; i++){
-			console.log(locationdata[0],locationdata[1],locationdata[2])
 			multiIcon.append('svg:image')
 				.attr("xlink:href","images/yellow-train.png")
 				.attr('width', vehicleSize)
