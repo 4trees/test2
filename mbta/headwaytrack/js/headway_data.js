@@ -370,9 +370,9 @@ function showArrivalVehicles(data,allStops){
     		return '<div class=\"col-xs-4 col-sm-4 col-md-4 col-lg-4\"><p class=\"arrivalTime\">' + time[0] + '<span class=\"ap\">' + time[1] + '</span></p></div>';
     	}).join('');
 		document.querySelector('#arrivalVehicle').innerHTML =
-			'<hr class="arrivals">' + nextarrivals.map(function(arrival) {
+			nextarrivals.map(function(arrival) {
     		return '<div class=\"col-xs-4 col-sm-4 col-md-4 col-lg-4\"><p><span class=\"vehicleCode\">' + arrival.attributes.label + '</span></p></div>'
-    	}).join('');
+    	}).join('') + '<hr class="arrivals">';
 		document.querySelector('#arrivalLocation').innerHTML = 
 			nextarrivals.map(function(arrival) {
 			var name = allStops.find(function(d){return d.id == arrival.parent_station.id}).name;
