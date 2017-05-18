@@ -1,12 +1,14 @@
 //scroll the page to Riverside stop when load the page.
 window.onload = function(){setTimeout(function(){window.scrollTo(0,2000)},10);}
 
+//line 
+var line = "Green-D"
 // URL globals
-stopsurl = "https://api.mbtace.com/stops?route=Green-D";
-vehiclesurl = "https://api.mbtace.com/vehicles?route=Green-D&include=stop";
-predictionsurl = "https://api.mbtace.com/predictions?route=Green-D";
-tripsurl = "https://api.mbtace.com/trips?route=Green-D";
-alerturl = "https://api.mbtace.com/alerts?route=Green-D";
+var stopsurl = "https://api.mbtace.com/stops?route=" + line,
+vehiclesurl = "https://api.mbtace.com/vehicles?route=" + line + "&include=stop",
+predictionsurl = "https://api.mbtace.com/predictions?route=" + line,
+tripsurl = "https://api.mbtace.com/trips?route=" + line,
+alerturl = "https://api.mbtace.com/alerts?route=" + line,
 allvehicleurl = "https://api.mbtace.com/vehicles?route=Green-B,Green-C,Green-D,Green-E&include=stop";
 
 
@@ -153,14 +155,13 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 	}
 // Initial
 	$scope.timeNow();
-	$scope.getPrediction();
 	$scope.getStops();
 	$scope.getVehicles();
+	$scope.getPrediction();
 	$scope.getAlerts();
 // Update
 	$interval(function(){
 		$scope.timeNow();
-
 	},1000)
 	$interval(function() {    
 		$scope.getVehicles();
@@ -245,7 +246,7 @@ function drawVehicles(data){
 vehicles.selectAll('.multiple').remove()
 vehicles.selectAll('.vehicle').classed('hidden',false)
 var update = vehicles.selectAll('.vehicle')
-	.data(data,function(d){console.log(d.id);return d.id})
+	.data(data,function(d){return d.id})
 
 var enter = update.enter()
 	.append('g')
@@ -286,7 +287,6 @@ update.merge(enter)
 		var station = getXYFromTranslate(d3.select('.' + d.parent_station.id)._groups[0][0]);
 		var Y = station[1];
 		var X = d.attributes.direction_id == 1? (rightLocation + 2 * bindWidth) : (leftLocation - 1 * bindWidth);
-		console.log(X)
 		var offsetY = offsetX = 0;
 		if(d.attributes.current_status == 'INCOMING_AT'){
 			//check if the train is turning around at a terminal stop
