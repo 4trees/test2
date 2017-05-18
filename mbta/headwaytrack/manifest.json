@@ -1,6 +1,8 @@
 {
-  "short_name": "GL headway",
+  "lang": "en",
+  "dir": "ltr",
   "name": "GL headway track viewer",
+  "short_name": "GL headway",
   "icons": [
     {
       "src": "images/launcher-icon.png",
@@ -18,7 +20,7 @@
       "sizes": "192x192"
     }
   ],
-  "background_color": "#333",
-  "theme_color": "#333",
-  "display": "standalone"
+  "display": "fullscreen",
+  "theme_color": "#333333",
+  "background_color": "#333333",
 }
