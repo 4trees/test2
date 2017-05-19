@@ -107,7 +107,7 @@ h1,h2,h3,h4,h5{
 .showDetail{
 	display: block !important;
 }
-#alertDetail, #searchDetail{
+#alertDetail, #searchDetail, #configDetail{
 	display: none;
 }
 #searchDetail hr{
@@ -116,7 +116,7 @@ h1,h2,h3,h4,h5{
 #searchRT{
 	font-size:1.2em;
 }
-.searchButton{
+.searchSubmit, .configSubmit{
 	background: #333;
 	color: #fff;
 	border:1px solid #333;
@@ -136,16 +136,9 @@ h1,h2,h3,h4,h5{
 	stroke:#333;
 }
 .highlightBG{	
-	/*fill:#FFD852;  Yellow */
 	fill:#FBB03B; /* Orange */
 }
-
-.alertImg{
-	height: 2.5em;
-	width: 2.5em;
-}
 .alertTitle{
-	/*color:#FFD852;  Yellow */
 	color:#FBB03B; /* Orange */
 	margin-top: 2.6em;
 }
@@ -156,6 +149,37 @@ h1,h2,h3,h4,h5{
 	color:#fff;
 	font-size: 120%;
 	cursor: pointer;
+}
+/* config radio */
+.radio-group input[type=radio] {
+  position: absolute;
+  visibility: hidden;
+  display: none;
+}
+
+.radio-group label {
+  color: #ccc;
+  cursor: pointer;
+  display: inline-block;
+  padding: 5px 20px;
+  margin: 0;
+  font-weight: normal;
+}
+
+.radio-group input[type=radio]:checked + label{
+  color: #fff;
+  background: #009966; /* Green */
+}
+
+.radio-group label + input[type=radio] + label {
+  border-left: solid 1px #ccc;
+  margin-left: -5px;
+}
+.radio-group {
+  border: solid 1px #ccc;
+  margin: 10px 0 20px 0;
+  border-radius: 4px;
+  overflow: hidden;
 }
 /* close */
 .close{

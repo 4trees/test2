@@ -1,13 +1,8 @@
+//global variable
 var m = {t:70,r:50,b:50,l:50},
     w = document.getElementById('canvas').clientWidth,
     h = document.getElementById('canvas').clientHeight;
-console.log(w,h)
-var plot = d3.select('svg')
-    // .append('svg')
-    .attr('width', w)
-    .attr('height', h - m.t - m.b)
-    .attr('transform','translate('+ 0+','+ m.t+')');
-
+var plot, bindLine, vehicles, line;
 
 var leftLocation = w*.37;
 var rightLocation = w*.63;
@@ -17,19 +12,16 @@ var vehicleSize = 28;
 var windowHeight = document.body.clientHeight;
 
 
-var bindLine = plot.select('.lineContainer')
-var vehicles = plot.select('.vehicleContainer')
-
-
 var detailBox = document.querySelector('#detailBox')
 var alertBt = document.querySelector('#alerts');
 var searchBt = document.querySelector('#search');
+var configBt = document.querySelector('#config');
 var alertCT = document.querySelector('#alertDetail')
 var searchCT = document.querySelector('#searchDetail')
+var configCT = document.querySelector('#configDetail')
 var vehicleBox = document.querySelector('#vehicleBox')
 var vehicleCT = document.querySelector('#vehicleDetail')
 var dismiss = document.querySelector('.dismiss')
-
 
 var isOpen = false;
 var isAlert = false;
@@ -37,8 +29,20 @@ var isVehicle = false;
 var isDismiss = false;
 var isFullscreen = false;
 
+//buttons on the top
 alertBt.addEventListener("click", function(){showDetail(alertCT)} );
 searchBt.addEventListener("click", function(){showDetail(searchCT)} );
+configBt.addEventListener("click", function(){showDetail(configCT)} );
+
+
+//close the search/alerts when click on the main diagram
+dismiss.addEventListener('click',closeDetail)
+//close the search/alerts/vehicle detail when click on the close button
+Array.from(document.querySelectorAll('.close')).forEach(function(e){
+	e.addEventListener('click',closeDetail)
+})
+
+//show the detail box on the top
 function showDetail(target){
 	//open the dismiss area when open the search/alerts
 	dismiss.classList.remove('hidden');isDismiss = true;
@@ -57,12 +61,6 @@ function showDetail(target){
 	})
 	isOpen = true;
 };
-//close the search/alerts when click on the main diagram
-dismiss.addEventListener('click',closeDetail)
-//close the search/alerts/vehicle detail when click on the close button
-Array.from(document.querySelectorAll('.close')).forEach(function(e){
-	e.addEventListener('click',closeDetail)
-})
 	
 function closeDetail(){
 	//close all
@@ -90,9 +88,62 @@ function launchIntoFullscreen(element) {
   }
 }
 
-document.querySelector('body').addEventListener('click',function(e){
-	if(!isFullscreen){
-		launchIntoFullscreen(document.documentElement); // the whole page
+// document.querySelector('body').addEventListener('click',function(e){
+// 	if(!isFullscreen){
+// 		launchIntoFullscreen(document.documentElement); // the whole page
+// 	}
+// })
+
+
+//config sumbit
+document.querySelector('.configSubmit').addEventListener('click',function(){
+	var lineChecked = document.querySelector('[name=line]:checked')
+	var isChecked = lineChecked
+	if(isChecked){
+		params['line'] = lineChecked.value;
+		location.search = paramsToS(params)
+		localStorage.setItem('config', params);
+		closeDetail()
 	}
+	
 })
 
+//get config from url params or localstorage 
+var params = {};
+var isConfig = false;
+if (location.search) {
+	//get params from url
+    var parts = location.search.substring(1).split('&');
+    for (var i = 0; i < parts.length; i++) {
+        var nv = parts[i].split('=');
+        if (!nv[0]) continue;
+        params[nv[0]] = nv[1] || true;
+    }
+    //set value to config form
+    document.querySelector('[value=' + params.line).checked = true;
+    //update localstorage
+    // localStorage.setItem('config', JSON.stringify(params));
+}else{
+	// if(localStorage.getItem('config')){
+	// 	params = JSON.parse(localStorage.getItem('config'));
+	// 	console.log(params)
+	// 	//update url params
+	// 	location.search = paramsToS(params)
+	// }else{
+		showDetail(configCT)
+	// }
+}
+console.log(params)
+
+if(params.line){isConfig = true}
+
+
+//generate the search params
+function paramsToS(params){
+	var searchParams = '';
+	Object.keys(params).forEach(function (key, i) {
+	    var value = params[key];
+	    searchParams = searchParams + (i == 0? '': '&') + key + '=' + value;
+	});
+	return searchParams
+}

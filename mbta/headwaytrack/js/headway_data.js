@@ -1,14 +1,10 @@
-//scroll the page to Riverside stop when load the page.
-window.onload = function(){setTimeout(function(){window.scrollTo(0,2000)},10);}
 
-//line 
-var line = "Green-D"
 // URL globals
-var stopsurl = "https://api.mbtace.com/stops?route=" + line,
-vehiclesurl = "https://api.mbtace.com/vehicles?route=" + line + "&include=stop",
-predictionsurl = "https://api.mbtace.com/predictions?route=" + line,
-tripsurl = "https://api.mbtace.com/trips?route=" + line,
-alerturl = "https://api.mbtace.com/alerts?route=" + line,
+var stopsurl = "https://api.mbtace.com/stops?route=" + params.line,
+vehiclesurl = "https://api.mbtace.com/vehicles?route=" + params.line + "&include=stop",
+predictionsurl = "https://api.mbtace.com/predictions?route=" +  params.line,
+tripsurl = "https://api.mbtace.com/trips?route=" +  params.line,
+alerturl = "https://api.mbtace.com/alerts?route=" +  params.line,
 allvehicleurl = "https://api.mbtace.com/vehicles?route=Green-B,Green-C,Green-D,Green-E&include=stop";
 
 
@@ -30,9 +26,8 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 			angular.forEach($scope.stops, function(stop, k){
 			$scope.allStops.push({id:stop.id,name:stop.attributes.name})
 			});
-			drawStation('left',$scope.stops)//draw left group of stations
-			drawStation('right',$scope.stops)//draw right group of stations
-
+			drawStation($scope.stops)//draw right group of stations
+			// drawStation('left',$scope.stops)//draw left group of stations
 		});
 	};
 //get all the vehicles data
@@ -49,7 +44,6 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 					$scope.vehicles.push(vehicle)
 				}
 			});
-
 			//draw the vehicles on the main diagram
 			drawVehicles($scope.vehicles)
 			replaceMultiVehicles($scope.vehicles)
@@ -59,7 +53,7 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 			// replaceMultiVehicles(test[hehe])
 
 			// SEARCH 
-			d3.select('.searchButton').on('click',function(d){
+			d3.select('.searchSubmit').on('click',function(d){
 				var searchValue = d3.select('.searchInput')._groups[0][0].value
 				//search on local
 				var getResults = response.data.data.filter(function(d){return d.attributes.label.includes(searchValue)})
@@ -86,6 +80,7 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 				//scroll the page to the first vehicle
 					var theTrain = d3.select('#train'+getResults[0].id)
 					var moveY = getXYFromTranslate(theTrain._groups[0][0])[1]
+					console.log(moveY)
 					window.scrollTo(0,moveY - windowHeight / 2)
 				//give color & bg
 					var text = theTrain.select('text').classed('highlight',true)
@@ -105,7 +100,7 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 		$http.get(predictionsurl)
 		.then(function(response) {
 			//get the current working station id from TOP BAR
-			var stationCode = document.querySelector('[data-station]').dataset.station
+			var stationCode = document.querySelector('#station').dataset.stationId
 			//get the prediction data related to the working station
 			$scope.allPredictions = response.data.data
 				.filter(function(d){return d.relationships.stop.data.id == stationCode}) 
@@ -153,13 +148,26 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 		d3.select('#nowTime').html(getTime()[0]);
 		d3.select('#ap').html(getTime()[1]);
 	}
-// Initial
+// Prepare canvas
+	plot = d3.select('svg')
+	    .attr('width', w)
+	    .attr('height', h - m.t - m.b)
+	    .attr('transform','translate('+ 0+','+ m.t+')');
+	bindLine = plot.select('.lineContainer')
+	vehicles = plot.select('.vehicleContainer')
+	line = bindLine.append('g')
+
+if(isConfig){
+	// Initial
 	$scope.timeNow();
 	$scope.getStops();
 	$scope.getVehicles();
 	$scope.getPrediction();
 	$scope.getAlerts();
-// Update
+	// var scrollY = getXYFromTranslate(document.querySelector('.place-river'))[1];
+	// console.log(document.querySelector('.place-river'))
+	// window.scrollTo(0,scrollY)
+	// Update
 	$interval(function(){
 		$scope.timeNow();
 	},1000)
@@ -168,6 +176,9 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 		$scope.getPrediction();
 		$scope.getAlerts();
 	}, 10000);
+}else{
+	showDetail(configCT)
+}
 
 });
 //get the trip id from prediction data
@@ -176,21 +187,10 @@ function getTripId(data){
 		return el.relationships.trip.data.id
 	})
 }
-//draw routes and stations on main diagram
-function drawStation(position,data){
-var line, location,arrowAngle;
-//draw station and route based on dirction
-if(position == 'right'){
-	location = rightLocation;
-	arrowAngle = true;
-}
-else{
-	location = leftLocation;
-	data.reverse();
-	arrowAngle = false;
-}
-var length = data.length;
-var line = bindLine.append('g')
+
+//draw routes
+function drawRoutes(position, length){
+var location = position == 'right'? rightLocation : leftLocation;
 //green routes
 line.append('rect')
 	.attr('class','bind')
@@ -198,7 +198,6 @@ line.append('rect')
 	.attr('width',bindWidth)
 	.attr('y',interval)
 	.attr('height',(length - 1) * interval)
-
 //direction arrows
 var arrows = line.append('g')
 var count = 4 // the count of arrow between stops
@@ -210,37 +209,45 @@ for(i=0;i<(length -1)*count;i++){
 			.attr('x2',location + bindWidth / 2)
 			.attr('y2',interval + interval / count * i + bindWidth / 2)
 			.attr('class','triangle')
-			.attr('transform','translate(' + (arrowAngle? bindWidth / 2 : 0) + '0)')
+			.attr('transform','translate(' + (position == 'right'? bindWidth / 2 : 0) + '0)')
 		arrows.append('line')
 			.attr('x2',location + bindWidth)
 			.attr('y2',interval + interval / count * i)
 			.attr('x1',location + bindWidth / 2)
 			.attr('y1',interval + interval / count * i + bindWidth / 2)
 			.attr('class','triangle')
-			.attr('transform','translate(' + (arrowAngle ? -bindWidth / 2 : 0) + '0)')
+			.attr('transform','translate(' + (position == 'right' ? -bindWidth / 2 : 0) + '0)')
 	}
-
 }
-
+}
+//draw stations on the routes on main diagram
+function drawStation(data){
+data.reverse();
+//draw station and route based on dirction
+var length = data.length;
+drawRoutes('right',length)
+drawRoutes('left',length)
 var update = line.selectAll('.stop')
 	.data(data,function(d){return d.id})
 var enter = update.enter()
 	.append('g')
 	.attr('class',function(d){return 'stop '+d.id})
-	.attr('transform',function(d,i){return 'translate('+location + ',' + (i + 1) * interval + ')'})
+	.attr('transform',function(d,i){return 'translate('+0 + ',' + (i + 1) * interval + ')'})
 enter.append('circle')
 	.attr('r',function(d,i){return i == 0 || i == length - 1?bindWidth - 6:(bindWidth - 6) / 2})
 	.attr('class',function(d,i){return i == 0 || i == length - 1?'terminalStop' : 'middleStop'})
-	.attr('cx',bindWidth / 2)
+	.attr('cx',leftLocation + bindWidth / 2)
+enter.append('circle')
+	.attr('r',function(d,i){return i == 0 || i == length - 1?bindWidth - 6:(bindWidth - 6) / 2})
+	.attr('class',function(d,i){return i == 0 || i == length - 1?'terminalStop' : 'middleStop'})
+	.attr('cx', rightLocation + bindWidth / 2)
+enter.append('text')
+	.text(function(d){return d.attributes.name})
+	.attr('class','stationName')
+	.attr('x',(rightLocation + leftLocation + bindWidth) / 2)
+update.exit().remove();
+}
 
-//only append station names once
-if(position == 'left'){
-	enter.append('text')
-		.text(function(d){return d.attributes.name})
-		.attr('class','stationName')
-		.attr('x',(rightLocation - leftLocation + bindWidth) / 2)
-}
-}
 //draw vehicles on main diagram
 function drawVehicles(data){
 vehicles.selectAll('.multiple').remove()
@@ -321,6 +328,7 @@ data.forEach(function(vehicle){
 allLocation.values().forEach(function(location){
 	var findMulti = Array.from(document.querySelectorAll('[data-location=' + location + ']'))
 	var count = findMulti.length
+	console.log(count)
 	if(count > 1){		
 		var locationdata = location.split('-')
 		var multidata = data.filter(function(d){return (d.attributes.current_status == locationdata[0]) && (d.relationships.stop.data.id == locationdata[1]) && (d.attributes.direction_id == locationdata[2])})
@@ -415,12 +423,11 @@ function drawAlertIcon(count){
 	var svgBox = document.querySelector('.alertImg')
 	if(svgBox.childElementCount){
 		d3.select('.alertImg').select('svg').select('text').text(count)
-	}else
-	{	var width = document.querySelector('.alertImg').clientWidth
-		var height = document.querySelector('.alertImg').clientHeight
+	}else{	
 		var svg = d3.select('.alertImg').append('svg')
-			.attr('viewBox','0 0 ' + width * 3 +' ' + height * 3)
-			.attr('transform','translate(0,' + height / 4 + ')')
+			.attr('viewBox','0 0 ' + 110 +' ' + 110)
+			.attr('width',40)
+			.attr('height',40)
 		svg.append('path')
 			.attr('d','M84.18,41.34l-3.42.46C80.61,26,73.21,14.52,59.34,7.34a37,37,0,0,0-30-2.08C9,12.23-2,35,5.3,55.14,11.76,73,32.57,88.68,58.91,77.48L60,80.57A36.58,36.58,0,0,1,46.57,84.1c-7,.39-13.92.05-20.55-2.7A42.41,42.41,0,0,1,10.07,69.55,39.54,39.54,0,0,1,1.74,54.66,44.81,44.81,0,0,1,.14,38.6a41.54,41.54,0,0,1,4.07-15A40.25,40.25,0,0,1,12,12.5C17.87,6.68,24.71,2.49,32.9.85a46.15,46.15,0,0,1,16-.29c11.91,1.8,21,8.13,27.88,17.81A40.89,40.89,0,0,1,83.87,36.7C84.08,38.23,84.08,39.8,84.18,41.34Z')
 			.style('fill','#fff')
@@ -470,6 +477,5 @@ function getDate(datestring){
 	var date = (d.getMonth()+1) + '/' + d.getDate() + '/' + d.getFullYear() + ' ' + (d.getHours() >12? -12 : 0 ) + d.getHours() + ':' + (d.getMinutes() <10? '0': '') +d.getMinutes() + (d.getHours() >=12? ' PM':' AM');
 	return date
 }
-
 
 
