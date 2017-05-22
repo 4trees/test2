@@ -5,14 +5,14 @@
     <meta charset="utf-8">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>GL headway track viewer</title>
+    <title>Headway Viewer</title>
     <link rel="stylesheet" type="text/css" href="../../thirdparty/bootstrap-3.3.5/bootstrap.min.css" >
 	<link rel="stylesheet" href="../../thirdparty/font-awesome-4.4.0/css/font-awesome.min.css">
-	<link rel="stylesheet" type="text/css" href="css/headway_dashboard.css">
+	<link rel="stylesheet" type="text/css" href="css/headway_dashboard.css?version=1.0.0">
 	<link rel="icon" type="image/png" href="images/webicon.png">
 	<link rel="apple-touch-icon" href="images/webicon.png">
 	<script src="../../thirdparty/angular-1.4.8/angular.min.js"></script>
-	<script src="js/headway_terminals.js"></script>
+	<script src="js/headway_terminals.js?version=1.0.0"></script>
 
 </head>
 <body>
@@ -43,8 +43,8 @@
 			</div>
 		</div>
 		<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4"">
-			<div id="config" class="text-right nav">
-				<p class="text-center text-darker"><span id="station" data-stationId=70161 data-stationName='place-river' data-direction=1>Riverside</span><span> <i class="fa fa-caret-down" aria-hidden="true"></i></span></p>
+			<div id="config">
+				<p class="text-right text-darker"><span id="station">Select</span><span> <i class="fa fa-caret-down" aria-hidden="true"></i></span></p>
 			</div>		
 		</div>
 	</div>
@@ -71,11 +71,11 @@
 			<form id="configForm">
 				<div>
 					<label class="text-darker">Select a line</label>
-	 				<div class="radio-group text-center">
-					   <input type="radio" id="Green-B" name="line" value="Green-B" required><label for="Green-B">Green-B</label>
-					   <input type="radio" id="Green-C" name="line" value="Green-C" required><label for="Green-C">Green-C</label>
-					   <input type="radio" id="Green-D" name="line" value="Green-D" required><label for="Green-D">Green-D</label>
-					   <input type="radio" id="Green-E" name="line" value="Green-E" required><label for="Green-E">Green-E</label>
+	 				<div class="radio-group">
+					   <div class="line"><input type="radio" id="Green-B" name="line" value="B-70107-lake" required><label for="Green-B">Boston College</label></div>
+					   <div class="line"><input type="radio" id="Green-C" name="line" value="C-70237-clmnl" required><label for="Green-C">Cleveland Circle</label></div>
+					   <div class="line"><input type="radio" id="Green-D" name="line" value="D-70161-river" required><label for="Green-D">Riverside</label></div>
+					   <div class="line"><input type="radio" id="Green-E" name="line" value="E-70209-lech" required><label for="Green-E">Lechmere</label></div>
 	  				</div>
   				</div>
 				<button class="configSubmit" type="submit">OK</button>
@@ -88,7 +88,7 @@
 	<script src="../../thirdparty/jquery-1.11.3.min.js"></script>
 	<script src="../../thirdparty/bootstrap-3.3.5/bootstrap.min.js"></script>
 	<script src="../../thirdparty/d3.min.js"></script>
-	<script src="js/headway_config.js"></script>
-	<script src="js/headway_data.js"></script>
+	<script src="js/headway_config.js?version=1.0.0"></script>
+	<script src="js/headway_data.js?version=1.0.0"></script>
 </body>
 </html>

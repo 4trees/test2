@@ -19,6 +19,13 @@ h1,h2,h3,h4,h5{
   body{
   	font-size:13px !important;
   }
+  .alertImg{
+  	width: 24px !important;
+  	height:24px !important;
+  }
+  .nowTime{
+	font-size:110% !important;
+	}
 }
 .container-fluid{
 	height: auto;
@@ -37,7 +44,9 @@ h1,h2,h3,h4,h5{
 #canvas{
     width:100%;
     margin: 0 auto;
-    height: 2000px;
+    height: auto;
+    min-height: 1600px;
+    /*height: 2000px;*/
 }
 .triangle{
 	fill:none;
@@ -101,6 +110,7 @@ h1,h2,h3,h4,h5{
 .nav {
 	font-size: 130%;
 }
+
 #detailBox.openBox,#vehicleBox.openBox{
 	top :3em ;
 }
@@ -109,6 +119,11 @@ h1,h2,h3,h4,h5{
 }
 #alertDetail, #searchDetail, #configDetail{
 	display: none;
+	width: 100%;
+}
+.alertImg{
+	width: 35px;
+	height:35px;
 }
 #searchDetail hr{
 	border:1px #333 dotted;
@@ -129,6 +144,7 @@ h1,h2,h3,h4,h5{
 	padding: 5px 15px;
 	font-size:1.5em;
 	margin-right: 1em;
+	margin-bottom: 1em;
 }
 .highlight{
 	fill:#333;
@@ -180,6 +196,12 @@ h1,h2,h3,h4,h5{
   margin: 10px 0 20px 0;
   border-radius: 4px;
   overflow: hidden;
+}
+.line{
+	max-width: 25%;
+	float: left;
+	position: relative;
+	vertical-align: middle;
 }
 /* close */
 .close{

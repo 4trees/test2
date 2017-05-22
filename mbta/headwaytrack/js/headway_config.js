@@ -1,15 +1,18 @@
 //global variable
 var m = {t:70,r:50,b:50,l:50},
-    w = document.getElementById('canvas').clientWidth,
-    h = document.getElementById('canvas').clientHeight;
-var plot, bindLine, vehicles, line;
+	w = document.getElementById('canvas').clientWidth;
+var h,//set the height when get the stops data
+	plot = d3.select('svg'),
+	bindLine = plot.select('.lineContainer'),
+	vehicles = plot.select('.vehicleContainer'),
+	line = bindLine.append('g');
 
-var leftLocation = w*.37;
-var rightLocation = w*.63;
-var bindWidth = w*.03; // for each track
+var leftLocation = w * .37;
+var rightLocation = w * .63;
+var bindWidth = w * .03; // for each track
 var interval = 70; // for each stop
 var vehicleSize = 28;
-var windowHeight = document.body.clientHeight;
+var windowHeight = window.outerWidth;
 
 
 var detailBox = document.querySelector('#detailBox')
@@ -98,9 +101,10 @@ function launchIntoFullscreen(element) {
 //config sumbit
 document.querySelector('.configSubmit').addEventListener('click',function(){
 	var lineChecked = document.querySelector('[name=line]:checked')
-	var isChecked = lineChecked
-	if(isChecked){
-		params['line'] = lineChecked.value;
+	// var isChecked = lineChecked
+	if(lineChecked){
+		// params['line'] = lineChecked.value;
+		params = lineChecked.value
 		location.search = paramsToS(params)
 		localStorage.setItem('config', params);
 		closeDetail()
@@ -109,41 +113,25 @@ document.querySelector('.configSubmit').addEventListener('click',function(){
 })
 
 //get config from url params or localstorage 
-var params = {};
+// var params = {};
+var params;
 var isConfig = false;
 if (location.search) {
 	//get params from url
-    var parts = location.search.substring(1).split('&');
-    for (var i = 0; i < parts.length; i++) {
-        var nv = parts[i].split('=');
-        if (!nv[0]) continue;
-        params[nv[0]] = nv[1] || true;
-    }
+    var params = location.search.substring(1).split('&')[0].split('=')[1]
     //set value to config form
-    document.querySelector('[value=' + params.line).checked = true;
-    //update localstorage
-    // localStorage.setItem('config', JSON.stringify(params));
+    var selectedOption = document.querySelector('[value=' + params+']')
+    selectedOption.checked = true;
+    document.querySelector('#station').innerHTML = selectedOption.nextSibling.textContent;
 }else{
-	// if(localStorage.getItem('config')){
-	// 	params = JSON.parse(localStorage.getItem('config'));
-	// 	console.log(params)
-	// 	//update url params
-	// 	location.search = paramsToS(params)
-	// }else{
-		showDetail(configCT)
-	// }
+	showDetail(configCT)
 }
-console.log(params)
 
-if(params.line){isConfig = true}
+if(params){isConfig = true}
 
 
 //generate the search params
 function paramsToS(params){
-	var searchParams = '';
-	Object.keys(params).forEach(function (key, i) {
-	    var value = params[key];
-	    searchParams = searchParams + (i == 0? '': '&') + key + '=' + value;
-	});
+	var searchParams = 'line=' + params;
 	return searchParams
 }

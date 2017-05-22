@@ -1,10 +1,10 @@
 
 // URL globals
-var stopsurl = "https://api.mbtace.com/stops?route=" + params.line,
-vehiclesurl = "https://api.mbtace.com/vehicles?route=" + params.line + "&include=stop",
-predictionsurl = "https://api.mbtace.com/predictions?route=" +  params.line,
-tripsurl = "https://api.mbtace.com/trips?route=" +  params.line,
-alerturl = "https://api.mbtace.com/alerts?route=" +  params.line,
+var stopsurl = "https://api.mbtace.com/stops?route=",
+vehiclesurl = "https://api.mbtace.com/vehicles?route=",
+predictionsurl = "https://api.mbtace.com/predictions?route=",
+// tripsurl = "https://api.mbtace.com/trips?route=",
+alerturl = "https://api.mbtace.com/alerts?route=",
 allvehicleurl = "https://api.mbtace.com/vehicles?route=Green-B,Green-C,Green-D,Green-E&include=stop";
 
 
@@ -20,19 +20,27 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 
 //get all the stations data
 	$scope.getStops = function(){
-		$http.get(stopsurl)
+		$http.get(stopsurl + 'Green-' + configs[0])
 		.then(function(response) {
 			$scope.stops = response.data.data;			
 			angular.forEach($scope.stops, function(stop, k){
 			$scope.allStops.push({id:stop.id,name:stop.attributes.name})
 			});
-			drawStation($scope.stops)//draw right group of stations
-			// drawStation('left',$scope.stops)//draw left group of stations
+			//initial the canvas
+			h = $scope.stops.length * interval + 350;
+			plot.attr('width', w)
+			    .attr('height', h - m.t - m.b)
+			    .attr('transform','translate('+ 0+','+ m.t+')');
+			//draw stations
+			drawStation($scope.stops)
+			//scroll page
+			var moveY = getXYFromTranslate(d3.select('.place-'+configs[2])._groups[0][0])[1]
+			window.scrollTo(0,moveY - windowHeight / 2)
 		});
 	};
 //get all the vehicles data
 	$scope.getVehicles = function(){
-		$http.get(vehiclesurl)
+		$http.get(vehiclesurl + 'Green-' + configs[0] + "&include=stop")
 		.then(function(response) {
 			$scope.vehicles = []
 			angular.forEach(response.data.included,function(stop){
@@ -80,7 +88,6 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 				//scroll the page to the first vehicle
 					var theTrain = d3.select('#train'+getResults[0].id)
 					var moveY = getXYFromTranslate(theTrain._groups[0][0])[1]
-					console.log(moveY)
 					window.scrollTo(0,moveY - windowHeight / 2)
 				//give color & bg
 					var text = theTrain.select('text').classed('highlight',true)
@@ -97,10 +104,10 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 	};
 //get the prediction data
 	$scope.getPrediction = function(){
-		$http.get(predictionsurl)
+		$http.get(predictionsurl + 'Green-' + configs[0])
 		.then(function(response) {
 			//get the current working station id from TOP BAR
-			var stationCode = document.querySelector('#station').dataset.stationId
+			var stationCode = configs[1];
 			//get the prediction data related to the working station
 			$scope.allPredictions = response.data.data
 				.filter(function(d){return d.relationships.stop.data.id == stationCode}) 
@@ -111,7 +118,7 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 			$scope.arrivalTripId = getTripId($scope.predictions)
 
 			//show first three time on NEXT ARRIVALS section
-			$scope.vehicles.forEach(function(vehicle){
+			angular.forEach($scope.vehicles,function(vehicle){
 				var arrivalTime = $scope.allPredictions.find(function(d){return d.relationships.trip.data.id == vehicle.relationships.trip.data.id})
 				if(arrivalTime){
 					vehicle.arrival_time = 	new Date(Date.parse(arrivalTime.attributes.arrival_time));
@@ -122,7 +129,7 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 	}
 //get alerts data
 	$scope.getAlerts = function(){
-		$http.get(alerturl)
+		$http.get(alerturl + 'Green-' + configs[0])
 		.then(function(response) {
 			$scope.alerts = response.data.data.filter(function(alert){
 				return (alert.attributes.lifecycle != 'Upcomming' && alert.attributes.lifecycle != 'Upcoming-Ongoing') && (alert.attributes.lifecycle == 'Ongoing'? alert.attributes.severity == 'Severe':alert)
@@ -148,25 +155,16 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 		d3.select('#nowTime').html(getTime()[0]);
 		d3.select('#ap').html(getTime()[1]);
 	}
-// Prepare canvas
-	plot = d3.select('svg')
-	    .attr('width', w)
-	    .attr('height', h - m.t - m.b)
-	    .attr('transform','translate('+ 0+','+ m.t+')');
-	bindLine = plot.select('.lineContainer')
-	vehicles = plot.select('.vehicleContainer')
-	line = bindLine.append('g')
 
 if(isConfig){
+	//get the config
+	var configs = params.split('-')
 	// Initial
 	$scope.timeNow();
 	$scope.getStops();
 	$scope.getVehicles();
 	$scope.getPrediction();
 	$scope.getAlerts();
-	// var scrollY = getXYFromTranslate(document.querySelector('.place-river'))[1];
-	// console.log(document.querySelector('.place-river'))
-	// window.scrollTo(0,scrollY)
 	// Update
 	$interval(function(){
 		$scope.timeNow();
@@ -426,8 +424,8 @@ function drawAlertIcon(count){
 	}else{	
 		var svg = d3.select('.alertImg').append('svg')
 			.attr('viewBox','0 0 ' + 110 +' ' + 110)
-			.attr('width',40)
-			.attr('height',40)
+			.attr('width',svgBox.clientWidth)
+			.attr('height',svgBox.clientHeight)
 		svg.append('path')
 			.attr('d','M84.18,41.34l-3.42.46C80.61,26,73.21,14.52,59.34,7.34a37,37,0,0,0-30-2.08C9,12.23-2,35,5.3,55.14,11.76,73,32.57,88.68,58.91,77.48L60,80.57A36.58,36.58,0,0,1,46.57,84.1c-7,.39-13.92.05-20.55-2.7A42.41,42.41,0,0,1,10.07,69.55,39.54,39.54,0,0,1,1.74,54.66,44.81,44.81,0,0,1,.14,38.6a41.54,41.54,0,0,1,4.07-15A40.25,40.25,0,0,1,12,12.5C17.87,6.68,24.71,2.49,32.9.85a46.15,46.15,0,0,1,16-.29c11.91,1.8,21,8.13,27.88,17.81A40.89,40.89,0,0,1,83.87,36.7C84.08,38.23,84.08,39.8,84.18,41.34Z')
 			.style('fill','#fff')
