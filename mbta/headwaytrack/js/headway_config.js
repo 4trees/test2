@@ -112,8 +112,13 @@ document.querySelector('.configSubmit').addEventListener('click',function(){
 	
 })
 
-//get config from url params or localstorage 
-// var params = {};
+//trunc the long word: for station name on the top right
+String.prototype.trunc = String.prototype.trunc ||
+      function(n){
+          return (this.length > n) ? this.substr(0, n-1) + '&hellip;' : this;
+      };
+
+//get config from url params 
 var params;
 var isConfig = false;
 if (location.search) {
@@ -122,7 +127,7 @@ if (location.search) {
     //set value to config form
     var selectedOption = document.querySelector('[value=' + params+']')
     selectedOption.checked = true;
-    document.querySelector('#station').innerHTML = selectedOption.nextSibling.textContent;
+    document.querySelector('#station').innerHTML = selectedOption.nextSibling.textContent.trunc(10);
 }else{
 	showDetail(configCT)
 }
@@ -144,3 +149,4 @@ trainColor = [
 {branch:'Green-D',color:'#FFFF75'},
 {branch:'Green-E',color:'#A9DDF3'}
 ]
+
