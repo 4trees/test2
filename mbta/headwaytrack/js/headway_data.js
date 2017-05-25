@@ -94,9 +94,10 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 					var textSize = text.node().getBBox();
 					theTrain.insert('rect', 'text')
 						.attr('class','highlightBG')
-						.attr('height',textSize.height + 5)
+						.attr('height',textSize.height + 3)
 						.attr('width',textSize.width + 5)
-						.attr('transform','translate(' + (textSize.x - 2.5) + ',' + (textSize.y - 2.5) + ')')
+						.attr('transform','translate(' + (textSize.x - 2.5) + ',' + (textSize.y - 1.5) + ')')
+						.style('fill',trainColor.find(function(d){return d.branch == getResults[0].relationships.route.data.id}).color)
 				}
 			})
 			
