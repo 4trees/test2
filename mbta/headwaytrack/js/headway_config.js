@@ -135,3 +135,12 @@ function paramsToS(params){
 	var searchParams = 'line=' + params;
 	return searchParams
 }
+
+
+//color for trains
+trainColor = [
+{branch:'Green-B',color:'#FF6666'},
+{branch:'Green-C',color:'#59CC14'},
+{branch:'Green-D',color:'#FFFF75'},
+{branch:'Green-E',color:'#A9DDF3'}
+]

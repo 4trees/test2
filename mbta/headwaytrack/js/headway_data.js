@@ -257,7 +257,7 @@ var enter = update.enter()
 	.append('g')
 	.attr('class','vehicle')
 	.attr('id',function(d){return 'train' + d.id})
-	.attr('data-location',function(d){return d.attributes.current_status + '-' + d.relationships.stop.data.id + '-' + d.attributes.direction_id})
+	.attr('data-location',function(d){return d.attributes.current_status + '-' + d.relationships.stop.data.id + '-' + d.attributes.direction_id + '-' + d.relationships.route.data.id})
 	.on('click',function(d){var n = [];n[0] = d;return showVehicle(n)})
 	.attr('transform',function(d){
 		var station = getXYFromTranslate(d3.select('.'+d.parent_station.id)._groups[0][0]);
@@ -277,16 +277,17 @@ var enter = update.enter()
 		return 'translate(' + (X + offsetX) + ',' + (Y + offsetY) + ')';
 	})
 enter.append('svg:image')
-	.attr("xlink:href","images/yellow-train.png")
+	.attr("xlink:href",function(d){return "images/"+ d.relationships.route.data.id + ".png"})
 	.attr('width', vehicleSize)
     .attr('height', vehicleSize)
     .attr('x',-vehicleSize/2)
     .attr('y',-vehicleSize/2)
 enter.append('text').text(function(d){return d.attributes.label})
 	.attr('class','vehicleNum')
+	.style('fill',function(d){return trainColor.find(function(e){return e.branch == d.relationships.route.data.id}).color})
 
 update.merge(enter)
-	.attr('data-location',function(d){return d.attributes.current_status + '-' + d.relationships.stop.data.id + '-' + d.attributes.direction_id})
+	.attr('data-location',function(d){return d.attributes.current_status + '-' + d.relationships.stop.data.id + '-' + d.attributes.direction_id + '-' + d.relationships.route.data.id})
 	.transition()
 	.attr('transform',function(d){
 		var station = getXYFromTranslate(d3.select('.' + d.parent_station.id)._groups[0][0]);
@@ -319,8 +320,9 @@ function replaceMultiVehicles(data){
 // })
 var allLocation = d3.set();
 data.forEach(function(vehicle){
-	 if( !allLocation.has(vehicle.attributes.current_status + '-' + vehicle.relationships.stop.data.id + '-' + vehicle.attributes.direction_id) ){
-        allLocation.add(vehicle.attributes.current_status + '-' + vehicle.relationships.stop.data.id + '-' + vehicle.attributes.direction_id);
+	var attr = vehicle.attributes.current_status + '-' + vehicle.relationships.stop.data.id + '-' + vehicle.attributes.direction_id + '-' + vehicle.relationships.route.data.id
+	 if( !allLocation.has(attr) ){
+        allLocation.add(attr);
     }
 })
 allLocation.values().forEach(function(location){
@@ -377,7 +379,7 @@ function showArrivalVehicles(data,allStops){
     	}).join('');
 		document.querySelector('#arrivalVehicle').innerHTML =
 			nextarrivals.map(function(arrival) {
-    		return '<div class=\"col-xs-4 col-sm-4 col-md-4 col-lg-4\"><p><span class=\"vehicleCode\">' + arrival.attributes.label + '</span></p></div>'
+    		return '<div class=\"col-xs-4 col-sm-4 col-md-4 col-lg-4\"><p><span class=\"vehicleCode\" style=\"color:' + trainColor.find(function(d){return d.branch == arrival.relationships.route.data.id}).color + '\">' + arrival.attributes.label + '</span></p></div>'
     	}).join('') + '<hr class="arrivals">';
 		document.querySelector('#arrivalLocation').innerHTML = 
 			nextarrivals.map(function(arrival) {

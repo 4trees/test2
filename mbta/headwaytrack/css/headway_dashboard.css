@@ -75,7 +75,7 @@ h1,h2,h3,h4,h5{
 }
 .vehicleNum{
 	/*fill:#FFD852;  Yellow */
-	fill:#FBB03B; /* Orange */
+	/*fill:#FBB03B; /* Orange */
 	alignment-baseline: middle;
 }
 /* end main diagram */
@@ -174,34 +174,44 @@ h1,h2,h3,h4,h5{
 }
 
 .radio-group label {
-  color: #ccc;
-  cursor: pointer;
-  display: inline-block;
-  padding: 5px 20px;
-  margin: 0;
-  font-weight: normal;
+  	color: #ccc;
+  	cursor: pointer;
+ 	padding: 5px;
+ 	margin: 0;
+  	font-weight: normal;
+  	vertical-align: middle;
+  	height: 60px;
+  	width: 100%;
+	max-width: 180px;
 }
 
 .radio-group input[type=radio]:checked + label{
-  color: #fff;
-  background: #009966; /* Green */
+  	color: #fff;
+ 	 background: #009966; /* Green */
 }
 
 .radio-group label + input[type=radio] + label {
-  border-left: solid 1px #ccc;
-  margin-left: -5px;
+  	border-left: solid 1px #ccc;
+  	margin-left: -5px;
 }
 .radio-group {
-  border: solid 1px #ccc;
-  margin: 10px 0 20px 0;
-  border-radius: 4px;
-  overflow: hidden;
+  	width:100%; 
+  	display: inline-block;
 }
 .line{
-	max-width: 25%;
+	margin-right: 15px;
+	text-align: center;
+	border: solid 1px #ccc;
+  	border-radius: 4px;
+  	overflow: hidden;
+}
+.radio-child{
+	width: 25%;
+	max-width: 180px;
 	float: left;
 	position: relative;
-	vertical-align: middle;
+	display: inline-block;
+	margin: 20px 0 20px 0;
 }
 /* close */
 .close{
@@ -238,7 +248,7 @@ p #nextArrivals{
 	font-size:130%;
 }
 .vehicleCode{
-	background: #666;
+	background: #222;
 	padding: 2px 5px;
 	border-radius: 4px;
 	font-size: 90%;
