@@ -262,7 +262,7 @@ var enter = update.enter()
 	.attr('transform',function(d){
 		var station = getXYFromTranslate(d3.select('.'+d.parent_station.id)._groups[0][0]);
 		var Y = station[1];
-		var X = d.attributes.direction_id == 1 ? (rightLocation + 2.5 * bindWidth) : (leftLocation - 1.5 * bindWidth);
+		var X = d.attributes.direction_id == 1 ? (rightLocation + 2 * bindWidth) : (leftLocation - 1 * bindWidth);
 		var offsetY = offsetX = 0;
 		if(d.attributes.current_status == 'INCOMING_AT'){
 			//check if the train is turning around at a terminal stop
@@ -292,7 +292,7 @@ update.merge(enter)
 	.attr('transform',function(d){
 		var station = getXYFromTranslate(d3.select('.' + d.parent_station.id)._groups[0][0]);
 		var Y = station[1];
-		var X = d.attributes.direction_id == 1? (rightLocation + 2.5 * bindWidth) : (leftLocation - 1.5 * bindWidth);
+		var X = d.attributes.direction_id == 1? (rightLocation + 2 * bindWidth) : (leftLocation - 1 * bindWidth);
 		var offsetY = offsetX = 0;
 		if(d.attributes.current_status == 'INCOMING_AT'){
 			//check if the train is turning around at a terminal stop
