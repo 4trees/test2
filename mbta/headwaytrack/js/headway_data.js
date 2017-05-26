@@ -241,7 +241,7 @@ enter.append('circle')
 	.attr('class',function(d,i){return i == 0 || i == length - 1?'terminalStop' : 'middleStop'})
 	.attr('cx', rightLocation + bindWidth / 2)
 enter.append('text')
-	.text(function(d){return d.attributes.name})
+	.text(function(d){return d.attributes.name.trunc(15)})
 	.attr('class','stationName')
 	.attr('x',(rightLocation + leftLocation + bindWidth) / 2)
 update.exit().remove();

@@ -115,7 +115,8 @@ document.querySelector('.configSubmit').addEventListener('click',function(){
 //trunc the long word: for station name on the top right
 String.prototype.trunc = String.prototype.trunc ||
       function(n){
-          return (this.length > n) ? this.substr(0, n-1) + '&hellip;' : this;
+          // return (this.length > n) ? this.substr(0, n-1) + '&hellip;' : this;
+          return (this.length > n) ? this.substr(0, n-1) + '...' : this;
       };
 
 //get config from url params 
@@ -144,9 +145,9 @@ function paramsToS(params){
 
 //color for trains
 trainColor = [
-{branch:'Green-B',color:'#FF6666'},
-{branch:'Green-C',color:'#59CC14'},
-{branch:'Green-D',color:'#FFFF75'},
-{branch:'Green-E',color:'#A9DDF3'}
+{branch:'Green-B',color:'#FF5244'},
+{branch:'Green-C',color:'#4DFF4D'},
+{branch:'Green-D',color:'#FCD03E'},
+{branch:'Green-E',color:'#4D96F5'}
 ]
 

@@ -61,11 +61,13 @@ h1,h2,h3,h4,h5{
 }
 .terminalStop{
 	stroke-width:5px;
-	stroke: #009966; /* Green */
+	/*stroke: #009966; *//* Green */
+	stroke: #419278;
 	fill:#fff;
 }
 .bind{
-	fill:#009966;
+	/*fill:#009966; *//* Green */
+	fill: #419278;
 }
 .stationName{
 	fill:#fff;
@@ -187,7 +189,8 @@ h1,h2,h3,h4,h5{
 
 .radio-group input[type=radio]:checked + label{
   	color: #fff;
- 	 background: #009966; /* Green */
+ 	 /*background: #009966;*/ /* Green */
+ 	 background: #419278/* Green */
 }
 
 .radio-group label + input[type=radio] + label {
@@ -236,7 +239,8 @@ hr.arrivals {
 	background-color: #fff;
 	margin-top: .5em;
 	margin-left: 15%; 
-	border-top: 2px solid #009966; /* Green */
+	/*border-top: 2px solid #009966;*/ /* Green */
+	border-top: 2px solid #419278; /* Green */
 	position: fixed;
 	width: 100%;
 	z-index: -1;
