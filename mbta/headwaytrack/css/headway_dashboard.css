@@ -46,7 +46,7 @@ h1,h2,h3,h4,h5{
     margin: 0 auto;
     height: auto;
     min-height: 1600px;
-    /*height: 2000px;*/
+    padding-top: 70px;
 }
 .triangle{
 	fill:none;

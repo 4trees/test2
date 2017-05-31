@@ -30,7 +30,7 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 			h = $scope.stops.length * interval + 350;
 			plot.attr('width', w)
 			    .attr('height', h - m.t - m.b)
-			    .attr('transform','translate('+ 0+','+ m.t+')');
+			    // .attr('transform','translate('+ 0+','+ m.t+')');
 			//draw stations
 			drawStation($scope.stops)
 			//scroll page		
