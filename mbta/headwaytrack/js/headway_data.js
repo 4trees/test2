@@ -85,7 +85,7 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 			d3.select('.searchSubmit').on('click',function(d){
 				var searchValue = d3.select('.searchInput')._groups[0][0].value
 				//search on local
-				var getResults = response.data.data.filter(function(d){return d.attributes.label.includes(searchValue)})
+				var getResults = $scope.vehicles.filter(function(d){return d.attributes.label.includes(searchValue)})
 				if(getResults.length == 0){
 					//search on server
 					$http.get(allvehicleurl)
