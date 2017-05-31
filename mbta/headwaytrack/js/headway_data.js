@@ -133,8 +133,9 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 		$http.get(alerturl + 'Green-' + configs[0])
 		.then(function(response) {
 			$scope.alerts = response.data.data.filter(function(alert){
-				return (alert.attributes.lifecycle != 'Upcomming' && alert.attributes.lifecycle != 'Upcoming-Ongoing') && (alert.attributes.lifecycle == 'Ongoing'? alert.attributes.severity == 'Severe':alert)
+				return (alert.attributes.lifecycle != 'Upcoming' && alert.attributes.lifecycle != 'Upcoming-Ongoing') && (alert.attributes.lifecycle == 'Ongoing'? alert.attributes.severity == 'Severe':alert)
 			})
+			console.log($scope.alerts)
 			//show alert icon only when alerts exist
 			var alert = d3.select('#alerts')
 			if($scope.alerts.length > 0 ){
