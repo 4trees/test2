@@ -12,7 +12,7 @@ var rightLocation = w * .63;
 var bindWidth = w * .03; // for each track
 var interval = 70; // for each stop
 var vehicleSize = 28;
-var windowHeight = window.outerWidth;
+var windowHeight = window.innerHeight;
 
 
 var detailBox = document.querySelector('#detailBox')
@@ -31,7 +31,7 @@ var isAlert = false;
 var isVehicle = false;
 var isDismiss = false;
 var isFullscreen = false;
-
+var activeContent = '';
 //buttons on the top
 alertBt.addEventListener("click", function(){showDetail(alertCT)} );
 searchBt.addEventListener("click", function(){showDetail(searchCT)} );
@@ -52,17 +52,25 @@ function showDetail(target){
 	//close the detail of vehicle when open search/alerts
 	vehicleBox.classList.remove('openBox')
 	isVehicle = false;
-	detailBox.classList.add('openBox')
-	//get the function content refers to click button
-	var contents = document.querySelectorAll('.content')
-	Array.from(contents).forEach(function(content){
-		if(content.id == target.id){
-			content.classList.add('showDetail')
-		}else{
-			content.classList.remove('showDetail')
-		}
-	})
-	isOpen = true;
+	//if is open, then close, otherwise, open.
+	if(activeContent == target.id){
+		detailBox.classList.remove('openBox');
+		activeContent = '';
+	}else{
+		detailBox.classList.add('openBox');
+		activeContent = target.id;
+		//set the content
+		var contents = document.querySelectorAll('.content')
+		Array.from(contents).forEach(function(content){
+			if(content.id == target.id){
+				content.classList.add('showDetail')
+			}else{
+				content.classList.remove('showDetail')
+			}
+		})
+		isOpen = true;
+	}
+
 };
 	
 function closeDetail(){
@@ -99,23 +107,20 @@ function launchIntoFullscreen(element) {
 
 
 //config sumbit
-document.querySelector('.configSubmit').addEventListener('click',function(){
-	var lineChecked = document.querySelector('[name=line]:checked')
-	// var isChecked = lineChecked
-	if(lineChecked){
-		// params['line'] = lineChecked.value;
-		params = lineChecked.value
+var configoption = Array.from(document.querySelectorAll('[name=line]'))
+
+configoption.forEach(function(option){
+	option.addEventListener('click',function(){
+		params = option.value
 		location.search = paramsToS(params)
 		localStorage.setItem('config', params);
-		closeDetail()
-	}
-	
+		closeDetail()		
+	})
 })
 
 //trunc the long word: for station name on the top right
 String.prototype.trunc = String.prototype.trunc ||
     function(n){
-        // return (this.length > n) ? this.substr(0, n-1) + '&hellip;' : this;
         return (this.length > n) ? this.substr(0, n-1) + '...' : this;
     };
 

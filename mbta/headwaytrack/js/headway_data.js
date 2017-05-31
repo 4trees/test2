@@ -2,7 +2,7 @@
 // URL globals
 var stopsurl = "https://api.mbtace.com/stops?route=",
 vehiclesurl = "https://api.mbtace.com/vehicles?route=",
-predictionsurl = "https://api.mbtace.com/predictions?route=",
+predictionsurl = "https://api.mbtace.com/predictions?route=Green-B,Green-C,Green-D,Green-E",
 // tripsurl = "https://api.mbtace.com/trips?route=",
 alerturl = "https://api.mbtace.com/alerts?route=",
 allvehicleurl = "https://api.mbtace.com/vehicles?route=Green-B,Green-C,Green-D,Green-E&include=stop";
@@ -33,32 +33,53 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 			    .attr('transform','translate('+ 0+','+ m.t+')');
 			//draw stations
 			drawStation($scope.stops)
-			//scroll page
+			//scroll page		
 			var moveY = getXYFromTranslate(d3.select('.place-'+configs[2])._groups[0][0])[1]
 			window.scrollTo(0,moveY - windowHeight / 2)
 		});
 	};
 //get all the vehicles data
 	$scope.getVehicles = function(){
-		$http.get(vehiclesurl + 'Green-' + configs[0] + "&include=stop")
-		.then(function(response) {
+		// $http.get(vehiclesurl + 'Green-' + configs[0] + "&include=stop")
+		//get all the vehicles
+		$http.get(allvehicleurl)
+		.then(function(vehicleres) {
 			$scope.vehicles = []
-			angular.forEach(response.data.included,function(stop){
-				var parentStation = $scope.allStops.find(function(d){return d.id == stop.relationships.parent_station.data.id});
-				if(parentStation){
-					stationId = stop.id
-					var vehicle = response.data.data.find(function(d){return d.relationships.stop.data.id == stop.id})
-					vehicle['parent_station'] = parentStation;
-					$scope.vehicles.push(vehicle)
-				}
-			});
-			//draw the vehicles on the main diagram
-			drawVehicles($scope.vehicles)
-			replaceMultiVehicles($scope.vehicles)
-			// var hehe = Math.random() < 0.5 ? 0:1;
-			// console.log(hehe)
-			// drawVehicles(test[hehe] )
-			// replaceMultiVehicles(test[hehe])
+			//get all the predictions
+			$http.get(predictionsurl)
+				.then(function(predictionres) {
+					//get the current working station id from TOP BAR
+					var stationCode = configs[1];
+					//get the prediction data related to the working station
+					$scope.allPredictions = predictionres.data.data
+						.filter(function(d){return d.relationships.stop.data.id == stationCode})
+					//filter the vehicles from prediction's trips and this line
+					$scope.allvehicles = vehicleres.data.data.filter(function(d){
+						return $scope.allPredictions.find(function(e){return e.relationships.trip.data.id == d.relationships.trip.data.id}) || (d.relationships.route.data.id == ('Green-' + configs[0]))
+					})
+					angular.forEach($scope.allvehicles,function(vehicle){
+						//get the parent station for each vehicle from included data.
+						var parentStation = vehicleres.data.included.find(function(d){return d.id == vehicle.relationships.stop.data.id})
+						// console.log(parentStation)
+						if(parentStation){
+							vehicle['parent_station'] = parentStation.relationships.parent_station.data.id;
+						}
+						//get the arrival_time for each vehicle from predictions
+						var arrivalTime = $scope.allPredictions.find(function(d){return d.relationships.trip.data.id == vehicle.relationships.trip.data.id})
+						if(arrivalTime){
+							vehicle['arrival_time'] = new Date(Date.parse(arrivalTime.attributes.arrival_time));
+						}
+						$scope.vehicles.push(vehicle)
+					})
+					// console.log($scope.vehicles)
+					//get first 3 next arrivals
+					$scope.predictions = $scope.vehicles.filter(function(d){return d.arrival_time}).sort(function(a,b){return a.arrival_time - b.arrival_time;}).slice(0,3);
+					//draw the vehicles on the main diagram
+					drawVehicles($scope.vehicles)
+					replaceMultiVehicles($scope.vehicles)
+					//show next arrivals
+					showArrivalVehicles($scope.predictions,$scope.allStops)
+				})
 
 			// SEARCH 
 			d3.select('.searchSubmit').on('click',function(d){
@@ -103,31 +124,7 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 			
 		});
 	};
-//get the prediction data
-	$scope.getPrediction = function(){
-		$http.get(predictionsurl + 'Green-' + configs[0])
-		.then(function(response) {
-			//get the current working station id from TOP BAR
-			var stationCode = configs[1];
-			//get the prediction data related to the working station
-			$scope.allPredictions = response.data.data
-				.filter(function(d){return d.relationships.stop.data.id == stationCode}) 
-			$scope.predictions = $scope.allPredictions.sort(function(a,b){
-       				return b.attributes.arrival_time - a.attributes.arrival_time; // sort by arrival time
-    			})
-    			.slice(0,3);//get first 3 next arrivals
-			$scope.arrivalTripId = getTripId($scope.predictions)
 
-			//show first three time on NEXT ARRIVALS section
-			angular.forEach($scope.vehicles,function(vehicle){
-				var arrivalTime = $scope.allPredictions.find(function(d){return d.relationships.trip.data.id == vehicle.relationships.trip.data.id})
-				if(arrivalTime){
-					vehicle.arrival_time = 	new Date(Date.parse(arrivalTime.attributes.arrival_time));
-				}
-			})
-			showArrivalVehicles($scope.vehicles,$scope.allStops)
-		})
-	}
 //get alerts data
 	$scope.getAlerts = function(){
 		$http.get(alerturl + 'Green-' + configs[0])
@@ -135,7 +132,6 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 			$scope.alerts = response.data.data.filter(function(alert){
 				return (alert.attributes.lifecycle != 'Upcoming' && alert.attributes.lifecycle != 'Upcoming-Ongoing') && (alert.attributes.lifecycle == 'Ongoing'? alert.attributes.severity == 'Severe':alert)
 			})
-			console.log($scope.alerts)
 			//show alert icon only when alerts exist
 			var alert = d3.select('#alerts')
 			if($scope.alerts.length > 0 ){
@@ -165,7 +161,6 @@ if(isConfig){
 	$scope.timeNow();
 	$scope.getStops();
 	$scope.getVehicles();
-	$scope.getPrediction();
 	$scope.getAlerts();
 	// Update
 	$interval(function(){
@@ -173,7 +168,6 @@ if(isConfig){
 	},1000)
 	$interval(function() {    
 		$scope.getVehicles();
-		$scope.getPrediction();
 		$scope.getAlerts();
 	}, 10000);
 }else{
@@ -262,7 +256,7 @@ var enter = update.enter()
 	.attr('data-location',function(d){return d.attributes.current_status + '-' + d.relationships.stop.data.id + '-' + d.attributes.direction_id + '-' + d.relationships.route.data.id})
 	.on('click',function(d){var n = [];n[0] = d;return showVehicle(n)})
 	.attr('transform',function(d){
-		var station = getXYFromTranslate(d3.select('.'+d.parent_station.id)._groups[0][0]);
+		var station = getXYFromTranslate(d3.select('.'+d.parent_station)._groups[0][0]);
 		var Y = station[1];
 		var X = d.attributes.direction_id == 1 ? (rightLocation + 2 * bindWidth) : (leftLocation - 1 * bindWidth);
 		var offsetY = offsetX = 0;
@@ -292,7 +286,7 @@ update.merge(enter)
 	.attr('data-location',function(d){return d.attributes.current_status + '-' + d.relationships.stop.data.id + '-' + d.attributes.direction_id + '-' + d.relationships.route.data.id})
 	.transition()
 	.attr('transform',function(d){
-		var station = getXYFromTranslate(d3.select('.' + d.parent_station.id)._groups[0][0]);
+		var station = getXYFromTranslate(d3.select('.' + d.parent_station)._groups[0][0]);
 		var Y = station[1];
 		var X = d.attributes.direction_id == 1? (rightLocation + 2 * bindWidth) : (leftLocation - 1 * bindWidth);
 		var offsetY = offsetX = 0;
@@ -317,9 +311,6 @@ update.exit().remove();
 
 //when multiple trans, hidden them and draw a grouped train 
 function replaceMultiVehicles(data){
-// 	data.forEach(function(d){
-// 	console.log(d.attributes.label + d.attributes.current_status + d.parent_station.id + d.relationships.stop.data.id + d.parent_station.name + d.attributes.direction_id)
-// })
 var allLocation = d3.set();
 data.forEach(function(vehicle){
 	var attr = vehicle.attributes.current_status + '-' + vehicle.relationships.stop.data.id + '-' + vehicle.attributes.direction_id + '-' + vehicle.relationships.route.data.id
@@ -338,19 +329,21 @@ allLocation.values().forEach(function(location){
 		Array.from(findMulti).forEach(function(multi){
 			multi.classList.add('hidden')
 		})
-		//show multiicon
-		var multiIcon = vehicles.append('g')
+		// //show multiicon
+		var updatamulti = vehicles
+			.append('g')
 			.attr('id',location).attr('class','multiple')
-			.attr('transform','translate(' + getXYFromTranslate(findMulti[1])[0] + ',' + getXYFromTranslate(findMulti[1])[1] + ')')
+			.attr('transform','translate(' + getXYFromTranslate(findMulti[0])[0] + ',' + getXYFromTranslate(findMulti[0])[1] + ')')
 			.on('click',function(){showVehicle(multidata)})
-		for(i = 0; i < count; i++){
-			multiIcon.append('svg:image')
-				.attr("xlink:href","images/yellow-train.png")
+			.selectAll('multiple')
+			.data(multidata)
+			.enter()
+			.append('svg:image')
+				.attr("xlink:href",function(d){return "images/"+ d.relationships.route.data.id + ".png"})
 				.attr('width', vehicleSize)
 			    .attr('height', vehicleSize)
-			    .attr('x', (locationdata[2] == 0? -1 : 1) * i * vehicleSize - vehicleSize / 2)
+			    .attr('x', function(d,i){return (locationdata[2] == 0? -1 : 1) * i * vehicleSize - vehicleSize / 2})
 			    .attr('y', -vehicleSize / 2)
-		}	
 	}
 })
 }
@@ -367,13 +360,9 @@ function showVehicle(data){
 }
 
 //show the next arrivals' vehicle label and location
-function showArrivalVehicles(data,allStops){
-	if(data != '' && allStops != ''){
-		var nextarrivals = data.filter(function(d){return d.arrival_time})
-				.sort(function(a,b){
-       				return a.arrival_time - b.arrival_time; // sort by arrival time
-    			})
-    			.slice(0,3);//get first 3 next arrivals
+function showArrivalVehicles(nextarrivals,allStops){
+	// console.log(nextarrivals.length)
+	if(nextarrivals != '' && allStops != ''){
 		document.querySelector('#arrivalTime').innerHTML = 
 			nextarrivals.map(function(arrival) {
 			var time = getTime(arrival.arrival_time);
@@ -385,7 +374,7 @@ function showArrivalVehicles(data,allStops){
     	}).join('') + '<hr class="arrivals">';
 		document.querySelector('#arrivalLocation').innerHTML = 
 			nextarrivals.map(function(arrival) {
-			var name = allStops.find(function(d){return d.id == arrival.parent_station.id}).name;
+			var name = allStops.find(function(d){return d.id == arrival.parent_station}).name;
     		return  '<div class=\"col-xs-4 col-sm-4 col-md-4 col-lg-4\"><p><span class=\"text-darker\">' + (arrival.attributes.current_status == 'INCOMING_AT'? 'approaching ' : 'at ' ) + '</span><span>' + name + '</span></p></div>'
     	}).join('');
 	}
