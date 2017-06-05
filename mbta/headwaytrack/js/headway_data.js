@@ -150,8 +150,9 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 	}
 //show the clock on TOP BAR section
 	$scope.timeNow = function(){
-		d3.select('#nowTime').html(getTime()[0]);
-		d3.select('#ap').html(getTime()[1]);
+		var time = getTime()
+		d3.select('#nowTime').html(time[0] + time[1]);
+		d3.select('#ap').html(time[2]);
 	}
 
 if(isConfig){
@@ -354,7 +355,7 @@ function showVehicle(data){
 	vehicleBox.classList.add('openBox');
 	vehicleCT.innerHTML = 
 		data.map(function(d){
-			return '<p class=\'lead\'>Train '+ d.attributes.label + (d.arrival_time ? (' will arrive at '+getTime(d.arrival_time)[0]+getTime(d.arrival_time)[1]) : '') + '.</p>';
+			return '<p class=\'lead\'>Train '+ d.attributes.label + (d.arrival_time ? (' will arrive at '+getTime(d.arrival_time)[0]+getTime(d.arrival_time)[1]+getTime(d.arrival_time)[2]) : '') + '.</p>';
 		}).join('')
 	isVehicle = true;
 }
@@ -366,7 +367,7 @@ function showArrivalVehicles(nextarrivals,allStops){
 		document.querySelector('#arrivalTime').innerHTML = 
 			nextarrivals.map(function(arrival) {
 			var time = getTime(arrival.arrival_time);
-    		return '<div class=\"col-xs-4 col-sm-4 col-md-4 col-lg-4\"><p class=\"arrivalTime\">' + time[0] + '<span class=\"ap\">' + time[1] + '</span></p></div>';
+    		return '<div class=\"col-xs-4 col-sm-4 col-md-4 col-lg-4\"><p class=\"arrivalTime\">' + time[0] + '<span class=\"ap\">' + time[1] + time[2] + '</span></p></div>';
     	}).join('');
 		document.querySelector('#arrivalVehicle').innerHTML =
 			nextarrivals.map(function(arrival) {
@@ -458,9 +459,10 @@ if(datestring){
 }else{
 	d = new Date()
 }
-var	timing = (d.getHours() >12? -12 : 0 ) + d.getHours() + ' : ' + (d.getMinutes() <10? '0': '') + d.getMinutes() + ' : ' + (d.getSeconds() <10? '0':'') + d.getSeconds(),
+var	timing = (d.getHours() >12? -12 : 0 ) + d.getHours() + ' : ' + (d.getMinutes() <10? '0': '') + d.getMinutes(),
+	seconds = ' : ' + (d.getSeconds() <10? '0':'') + d.getSeconds(),
 	ap = d.getHours() >=12? ' PM':' AM';
-	time.push(timing,ap)
+	time.push(timing,seconds,ap)
 	return time
 }
 function getDate(datestring){

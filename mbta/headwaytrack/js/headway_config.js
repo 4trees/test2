@@ -134,8 +134,6 @@ if (location.search) {
     var selectedOption = document.querySelector('[value=' + params+']')
     selectedOption.checked = true;
     document.querySelector('#station').innerHTML = selectedOption.nextSibling.textContent.trunc(10);
-}else{
-	showDetail(configCT)
 }
 
 if(params){isConfig = true}
