@@ -1,3 +1,8 @@
+//reload the page per 4 hours
+setTimeout(function(){ location.reload(); }, 4*60*60*1000);
+
+
+
 //global variable
 var m = {t:70,r:50,b:50,l:50},
 	w = document.getElementById('canvas').clientWidth;
@@ -78,12 +83,24 @@ function closeDetail(){
 	dismiss.classList.add('hidden');isDismiss = false;
 	detailBox.classList.remove('openBox');isOpen = false;
 	vehicleBox.classList.remove('openBox');isVehicle = false;
-	//cancel the search highlight
-	if(document.querySelector('.highlight')){
+
+}
+function removeHighlight(){
+	var highlight = document.querySelector('.highlight')
+	if(highlight){
 		document.querySelector('.highlight').classList.remove('highlight')
 		document.querySelector('.highlightBG').remove()
 	}
 
+}
+
+//updating box
+function updating(err){
+	if(err){
+		document.querySelector('#updating').classList.remove('hidden')
+	}else{
+		document.querySelector('#updating').classList.add('hidden')
+	}
 }
 
 //full screen
@@ -107,12 +124,14 @@ function launchIntoFullscreen(element) {
 
 
 //config sumbit
-var configoption = Array.from(document.querySelectorAll('[name=line]'))
+var configoption = Array.from(document.querySelectorAll('input[name=line]'))
 
 configoption.forEach(function(option){
 	option.addEventListener('click',function(){
 		params = option.value
 		location.search = paramsToS(params)
+
+		//store the config
 		localStorage.setItem('config', params);
 		closeDetail()		
 	})

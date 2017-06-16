@@ -8,11 +8,11 @@
     <title>Headway Viewer</title>
     <link rel="stylesheet" type="text/css" href="../../thirdparty/bootstrap-3.3.5/bootstrap.min.css" >
 	<link rel="stylesheet" href="../../thirdparty/font-awesome-4.4.0/css/font-awesome.min.css">
-	<link rel="stylesheet" type="text/css" href="css/headway_dashboard.css?version=1.1.0">
+	<link rel="stylesheet" type="text/css" href="css/headway_dashboard.css?version=1.1.1">
 	<link rel="icon" type="image/png" href="images/webicon.png">
 	<link rel="apple-touch-icon" href="images/webicon.png">
 	<script src="../../thirdparty/angular-1.4.8/angular.min.js"></script>
-	<script src="js/headway_terminals.js?version=1.1.0"></script>
+	<script src="js/headway_terminals.js?version=1.1.1"></script>
 
 </head>
 <body>
@@ -47,10 +47,12 @@
 				<p class="text-right text-darker"><span id="station">Select</span><span> <i class="fa fa-caret-down" aria-hidden="true"></i></span></p>
 			</div>		
 		</div>
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center" id="updating">Updating...</div>
+
 	</div>
 	<div class="row text-center" id="nextArrivals">
-		<div class="row"><p>Next arrivals</p></div>
-		<div class="row" id="arrivalTime"></div>
+		<div class="row"><p id="newArrivalsTitle">Next arrivals</p></div>
+		<div class="row" id="arrivalTime">upadating...</div>
 		<div class="row" id="arrivalVehicle"></div>
 		<div class="row" id="arrivalLocation"></div>
 	</div>
@@ -91,11 +93,12 @@
 		<div class="row text-center text-darker close"><i class="fa fa-angle-double-up" aria-hidden="true"></i></div>
 	</div>
 	<div class="row dismiss hidden"></div>
+
 </div>
 	<script src="../../thirdparty/jquery-1.11.3.min.js"></script>
 	<script src="../../thirdparty/bootstrap-3.3.5/bootstrap.min.js"></script>
 	<script src="../../thirdparty/d3.min.js"></script>
-	<script src="js/headway_config.js?version=1.1.0"></script>
-	<script src="js/headway_data.js?version=1.1.0"></script>
+	<script src="js/headway_config.js?version=1.1.1"></script>
+	<script src="js/headway_data.js?version=1.1.1"></script>
 </body>
 </html>

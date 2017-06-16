@@ -17,4 +17,6 @@ var terminals =
 {"parent_station":"place-gover","stop_id":70201,"stop_name":"Government Center - Green Line Eastbound","direction_id":1},
 {"parent_station":"place-gover","stop_id":70202,"stop_name":"Government Center - Green Line Westbound","direction_id":0},
 {"parent_station":"place-north","stop_id":70205,"stop_name":"North Station - Green Line Outbound","direction_id":1},
-{"parent_station":"place-north","stop_id":70206,"stop_name":"North Station - Green Line Inbound","direction_id":0}]
+{"parent_station":"place-north","stop_id":70206,"stop_name":"North Station - Green Line Inbound","direction_id":0},
+{"parent_station":"place-kencl","stop_id":70150,"stop_name":"Kenmore - Inbound","direction_id":1}
+]

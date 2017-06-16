@@ -36,6 +36,8 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 			//scroll page		
 			var moveY = getXYFromTranslate(d3.select('.place-'+configs[2])._groups[0][0])[1]
 			window.scrollTo(0,moveY - windowHeight / 2)
+		},function(err){
+			updating(err)
 		});
 	};
 //get all the vehicles data
@@ -44,6 +46,9 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 		//get all the vehicles
 		$http.get(allvehicleurl)
 		.then(function(vehicleres) {
+			if(vehicleres.status == 200){
+				updating()
+			}
 			$scope.vehicles = []
 			//get all the predictions
 			$http.get(predictionsurl)
@@ -71,18 +76,30 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 						}
 						$scope.vehicles.push(vehicle)
 					})
-					// console.log($scope.vehicles)
+					//update the title of NEXT ARRIVALS SECTION
+					if($scope.allStops){
+						var arrivalName = $scope.allStops.find(function(stop){return stop.id == 'place-' + configs[2]}).name;
+						document.querySelector('#newArrivalsTitle').innerHTML = 'Next arrivals at ' + arrivalName;
+					}
+
+					//show next arrivals
+					showArrivalVehicles($scope.predictions,$scope.allStops)
+
 					//get first 3 next arrivals
 					$scope.predictions = $scope.vehicles.filter(function(d){return d.arrival_time}).sort(function(a,b){return a.arrival_time - b.arrival_time;}).slice(0,3);
 					//draw the vehicles on the main diagram
-					drawVehicles($scope.vehicles)
-					replaceMultiVehicles($scope.vehicles)
-					//show next arrivals
-					showArrivalVehicles($scope.predictions,$scope.allStops)
+					drawVehicles($scope.vehicles,arrivalName)
+					replaceMultiVehicles($scope.vehicles,arrivalName)
+
+
+				},function(err){
+					updating(err)
 				})
 
 			// SEARCH 
 			d3.select('.searchSubmit').on('click',function(d){
+				d3.select('#searchRT').html('')
+				removeHighlight()
 				var searchValue = d3.select('.searchInput')._groups[0][0].value
 				//search on local
 				var getResults = $scope.vehicles.filter(function(d){return d.attributes.label.includes(searchValue)})
@@ -95,14 +112,17 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 						if(getServerResult.length == 0){
 							d3.select('#searchRT').html('<hr><p class=\'lead\'>Car ' + searchValue +  ' is not being tracked by the real-time system.</p>')
 						}else if(getServerResult.length == 1){
+							var trainlabel = getServerResult[0].attributes.label;
 							var line = getServerResult[0].relationships.route.data.id;
 							var direction = getServerResult[0].attributes.direction_id ? 'westbound' : 'eastbound';
 							var status = getServerResult[0].attributes.current_status == 'INCOMING_AT'? 'approaching ' : 'at ';
 							var station = getStops.find(function(d){return d.id == getServerResult[0].relationships.stop.data.id}).attributes.name;
-							d3.select('#searchRT').html('<hr><p class=\'lead\'>Train ' + searchValue + ' is on ' + line + ' ' + direction + ' ' + status + ' ' + station + '.</p>')
+							d3.select('#searchRT').html('<hr><p class=\'lead\'>Train ' + trainlabel + ' is on ' + line + ' ' + direction + ' ' + status + ' ' + station + '.</p>')
 						}else{
 							d3.select('#searchRT').html('<hr><p class=\'lead\'>Data error: Train ' + searchValue + ' is listed in more than one place.</p>')
 						}
+					},function(err){
+						updating(err)
 					})
 				}else{
 				//highlight the vehicle
@@ -119,9 +139,13 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 						.attr('width',textSize.width + 5)
 						.attr('transform','translate(' + (textSize.x - 2.5) + ',' + (textSize.y - 1.5) + ')')
 						.style('fill',trainColor.find(function(d){return d.branch == getResults[0].relationships.route.data.id}).color)
+				//close the search box
+					closeDetail()
 				}
 			})
 			
+		},function(err){
+			updating(err)
 		});
 	};
 
@@ -146,6 +170,8 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 					alert.classed('hidden',true)
 				}				
 			}
+		},function(err){
+			updating(err)
 		})
 	}
 //show the clock on TOP BAR section
@@ -244,7 +270,7 @@ update.exit().remove();
 }
 
 //draw vehicles on main diagram
-function drawVehicles(data){
+function drawVehicles(data,arrivalName){
 vehicles.selectAll('.multiple').remove()
 vehicles.selectAll('.vehicle').classed('hidden',false)
 var update = vehicles.selectAll('.vehicle')
@@ -255,7 +281,7 @@ var enter = update.enter()
 	.attr('class','vehicle')
 	.attr('id',function(d){return 'train' + d.id})
 	.attr('data-location',function(d){return d.attributes.current_status + '-' + d.relationships.stop.data.id + '-' + d.attributes.direction_id + '-' + d.relationships.route.data.id})
-	.on('click',function(d){var n = [];n[0] = d;return showVehicle(n)})
+	.on('click',function(d){var n = [];n[0] = d;return showVehicle(n,arrivalName)})
 	.attr('transform',function(d){
 		var station = getXYFromTranslate(d3.select('.'+d.parent_station)._groups[0][0]);
 		var Y = station[1];
@@ -311,7 +337,7 @@ update.exit().remove();
 }
 
 //when multiple trans, hidden them and draw a grouped train 
-function replaceMultiVehicles(data){
+function replaceMultiVehicles(data,arrivalName){
 var allLocation = d3.set();
 data.forEach(function(vehicle){
 	var attr = vehicle.attributes.current_status + '-' + vehicle.relationships.stop.data.id + '-' + vehicle.attributes.direction_id + '-' + vehicle.relationships.route.data.id
@@ -322,7 +348,7 @@ data.forEach(function(vehicle){
 allLocation.values().forEach(function(location){
 	var findMulti = Array.from(document.querySelectorAll('[data-location=' + location + ']'))
 	var count = findMulti.length
-	console.log(count)
+
 	if(count > 1){		
 		var locationdata = location.split('-')
 		var multidata = data.filter(function(d){return (d.attributes.current_status == locationdata[0]) && (d.relationships.stop.data.id == locationdata[1]) && (d.attributes.direction_id == locationdata[2])})
@@ -335,7 +361,7 @@ allLocation.values().forEach(function(location){
 			.append('g')
 			.attr('id',location).attr('class','multiple')
 			.attr('transform','translate(' + getXYFromTranslate(findMulti[0])[0] + ',' + getXYFromTranslate(findMulti[0])[1] + ')')
-			.on('click',function(){showVehicle(multidata)})
+			.on('click',function(){showVehicle(multidata,arrivalName)})
 			.selectAll('multiple')
 			.data(multidata)
 			.enter()
@@ -349,20 +375,29 @@ allLocation.values().forEach(function(location){
 })
 }
 //show vehicle's information when click on the icon of it
-function showVehicle(data){
+function showVehicle(data,arrivalName){
+	//remove the highlight if it is highlight
+	var findHighlight = document.querySelector('.highlight')
+	if(findHighlight){
+		var highlightVehicle = findHighlight.parentNode.id;
+		if(data.map(function(d){return 'train'+d.id}).includes(highlightVehicle)){
+			removeHighlight()
+		}
+	}
 	//open the dismiss area when open the search/alerts
 	dismiss.classList.remove('hidden');isDismiss = true;
 	vehicleBox.classList.add('openBox');
 	vehicleCT.innerHTML = 
 		data.map(function(d){
-			return '<p class=\'lead\'>Train '+ d.attributes.label + (d.arrival_time ? (' will arrive at '+getTime(d.arrival_time)[0]+getTime(d.arrival_time)[1]+getTime(d.arrival_time)[2]) : '') + '.</p>';
+			console.log(d)
+			return '<p class=\'lead\'>Train '+ d.attributes.label + (d.arrival_time ? (' will arrive '+ arrivalName + ' at ' +  getTime(d.arrival_time)[0]+getTime(d.arrival_time)[1]+getTime(d.arrival_time)[2]) : '') + '.</p>';
 		}).join('')
 	isVehicle = true;
 }
 
 //show the next arrivals' vehicle label and location
 function showArrivalVehicles(nextarrivals,allStops){
-	// console.log(nextarrivals.length)
+
 	if(nextarrivals != '' && allStops != ''){
 		document.querySelector('#arrivalTime').innerHTML = 
 			nextarrivals.map(function(arrival) {
@@ -467,7 +502,7 @@ var	timing = (d.getHours() >12? -12 : 0 ) + d.getHours() + ' : ' + (d.getMinutes
 }
 function getDate(datestring){
 	var d = new Date(Date.parse(datestring));
-	var date = (d.getMonth()+1) + '/' + d.getDate() + '/' + d.getFullYear() + ' ' + (d.getHours() >12? -12 : 0 ) + d.getHours() + ':' + (d.getMinutes() <10? '0': '') +d.getMinutes() + (d.getHours() >=12? ' PM':' AM');
+	var date = (d.getMonth()+1) + '/' + d.getDate() + '/' + d.getFullYear() + ' ' + (d.getHours() >12? d.getHours()-12 : d.getHours() ) +  + ':' + (d.getMinutes() <10? '0': '') +d.getMinutes() + (d.getHours() >=12? ' PM':' AM');
 	return date
 }
 
