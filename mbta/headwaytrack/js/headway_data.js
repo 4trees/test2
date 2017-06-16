@@ -204,14 +204,14 @@ for(i=0;i<(length -1)*count;i++){
 			.attr('x2',location + bindWidth / 2)
 			.attr('y2',interval + interval / count * i + bindWidth / 2)
 			.attr('class','triangle')
-			.attr('transform','translate(' + (position == 'right'? bindWidth / 2 : 0) + '0)')
+			.attr('transform','translate(' + (position == 'right'? bindWidth / 2 : 0) + ',0)')
 		arrows.append('line')
 			.attr('x2',location + bindWidth)
 			.attr('y2',interval + interval / count * i)
 			.attr('x1',location + bindWidth / 2)
 			.attr('y1',interval + interval / count * i + bindWidth / 2)
 			.attr('class','triangle')
-			.attr('transform','translate(' + (position == 'right' ? -bindWidth / 2 : 0) + '0)')
+			.attr('transform','translate(' + (position == 'right' ? -bindWidth / 2 : 0) + ',0)')
 	}
 }
 }
