@@ -291,8 +291,8 @@ var enter = update.enter()
 			//check if the train is turning around at a terminal stop
 			var ifToTerminal = terminals.find(function(t){return t.stop_id == d.relationships.stop.data.id})
 			if(ifToTerminal && (ifToTerminal.direction_id != d.attributes.direction_id)){
-				offsetY = interval * (d.attributes.direction_id == 1? -1 : 1) * .45;
-				offsetX = (d.attributes.direction_id == 1 ? -1 : 1) * ((rightLocation - leftLocation) / 2 + 3 * bindWidth);
+				offsetY = interval * (d.attributes.direction_id == 1? -1 : 1) * .4;
+				offsetX = (d.attributes.direction_id == 1 ? -1 : 1) * ((rightLocation - leftLocation) / 2 + 4 * bindWidth);
 			}else{
 				offsetY = (d.attributes.direction_id == 1 ? 1 : -1) * interval / 2;
 			}
