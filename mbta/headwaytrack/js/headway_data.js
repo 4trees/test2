@@ -77,10 +77,11 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 						$scope.vehicles.push(vehicle)
 					})
 					//update the title of NEXT ARRIVALS SECTION
-					if($scope.allStops){
+					
+					if($scope.allStops.length !=0){
 						var arrivalName = $scope.allStops.find(function(stop){return stop.id == 'place-' + configs[2]}).name;
 						document.querySelector('#newArrivalsTitle').innerHTML = 'Next arrivals at ' + arrivalName;
-					}
+					}else(location.reload())
 
 					//show next arrivals
 					showArrivalVehicles($scope.predictions,$scope.allStops)
@@ -127,18 +128,27 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 				}else{
 				//highlight the vehicle
 				//scroll the page to the first vehicle
-					var theTrain = d3.select('#train'+getResults[0].id)
-					var moveY = getXYFromTranslate(theTrain._groups[0][0])[1]
+					// var heightedtheTrain = d3.select('.multiple').select('#train'+getResults[0].id)
+					// console.log(heightedtheTrain)
+					ishighlight = getResults[0].id
+					console.log(ishighlight)
+					var theTrains =  d3.selectAll('.train'+ishighlight)
+					console.log(theTrains.node())
+					var moveY = getXYFromTranslate(theTrains._groups[0][0])[1]
 					window.scrollTo(0,moveY - windowHeight / 2)
-				//give color & bg
-					var text = theTrain.select('text').classed('highlight',true)
-					var textSize = text.node().getBBox();
-					theTrain.insert('rect', 'text')
-						.attr('class','highlightBG')
-						.attr('height',textSize.height + 3)
-						.attr('width',textSize.width + 5)
-						.attr('transform','translate(' + (textSize.x - 2.5) + ',' + (textSize.y - 1.5) + ')')
-						.style('fill',trainColor.find(function(d){return d.branch == getResults[0].relationships.route.data.id}).color)
+					//give color & bg
+					theTrains.each(function(d){
+						console.log(this)
+						this.classList.add('highlight')
+						this.querySelector('rect').classList.add('highlightBG');
+
+						// var bgSize = theTrain.node().getBBox();
+						// theTrain.insert('rect','image')
+						// 	.attr('class','highlightBG')
+						// 	.attr('height',bgSize.height + 6)
+						// 	.attr('width',bgSize.width + 6)
+						// 	.attr('transform','translate(' + (textSize.x - 3) + ',' + (bgSize.y - 3) + ')')
+					})
 				//close the search box
 					closeDetail()
 				}
@@ -278,9 +288,8 @@ var update = vehicles.selectAll('.vehicle')
 
 var enter = update.enter()
 	.append('g')
-	.attr('class','vehicle')
-	.attr('id',function(d){return 'train' + d.id})
-	.attr('data-location',function(d){return d.attributes.current_status + '-' + d.relationships.stop.data.id + '-' + d.attributes.direction_id + '-' + d.relationships.route.data.id})
+	.attr('class',function(d){return 'vehicle train' + d.id})
+	.attr('data-location',function(d){return d.attributes.current_status + '-' + d.relationships.stop.data.id + '-' + d.attributes.direction_id})
 	.on('click',function(d){var n = [];n[0] = d;return showVehicle(n,arrivalName)})
 	.attr('transform',function(d){
 		var station = getXYFromTranslate(d3.select('.'+d.parent_station)._groups[0][0]);
@@ -299,6 +308,7 @@ var enter = update.enter()
 		}
 		return 'translate(' + (X + offsetX) + ',' + (Y + offsetY) + ')';
 	})
+
 enter.append('svg:image')
 	.attr("xlink:href",function(d){return "images/"+ d.relationships.route.data.id + ".png"})
 	.attr('width', vehicleSize)
@@ -308,9 +318,14 @@ enter.append('svg:image')
 enter.append('text').text(function(d){return d.attributes.label})
 	.attr('class','vehicleNum')
 	.style('fill',function(d){return trainColor.find(function(e){return e.branch == d.relationships.route.data.id}).color})
-
-update.merge(enter)
-	.attr('data-location',function(d){return d.attributes.current_status + '-' + d.relationships.stop.data.id + '-' + d.attributes.direction_id + '-' + d.relationships.route.data.id})
+	.attr('x',function(d){return (d.attributes.direction_id == 0? -1 : 1) * vehicleSize / 2})
+	.style('text-anchor',function(d){return d.attributes.direction_id == 0? 'end' : 'start'})
+enter.insert('rect','image')
+	.attr('width',function(d){return d3.select(this.parentNode).node().getBBox().width + vehicleSize / 2})
+	.attr('height',highlightBGHeight)
+	.style('fill','none')
+var merge = update.merge(enter)
+	.attr('data-location',function(d){return d.attributes.current_status + '-' + d.relationships.stop.data.id + '-' + d.attributes.direction_id})
 	.transition()
 	.attr('transform',function(d){
 		var station = getXYFromTranslate(d3.select('.' + d.parent_station)._groups[0][0]);
@@ -329,10 +344,14 @@ update.merge(enter)
 		}
 		return 'translate(' + (X + offsetX) + ',' + (Y + offsetY) + ')';
 	})
-	.select('text')
+merge.select('text')
 	.attr('x',function(d){return (d.attributes.direction_id == 0? -1 : 1) * vehicleSize / 2})
 	.style('text-anchor',function(d){return d.attributes.direction_id == 0? 'end' : 'start'})
-
+merge.select('rect')
+	.attr('transform',function(d){
+		let textSize = d3.select(this.parentNode).select('text').node().getBBox();
+		return 'translate('+ ((d.attributes.direction_id == 0 ?(-textSize.width -vehicleSize +3) : -vehicleSize/2 -3) ) + ',' +( textSize.y - highlightBGHeight + vehicleSize) + ')'
+	})
 update.exit().remove();
 }
 
@@ -340,7 +359,7 @@ update.exit().remove();
 function replaceMultiVehicles(data,arrivalName){
 var allLocation = d3.set();
 data.forEach(function(vehicle){
-	var attr = vehicle.attributes.current_status + '-' + vehicle.relationships.stop.data.id + '-' + vehicle.attributes.direction_id + '-' + vehicle.relationships.route.data.id
+	var attr = vehicle.attributes.current_status + '-' + vehicle.relationships.stop.data.id + '-' + vehicle.attributes.direction_id
 	 if( !allLocation.has(attr) ){
         allLocation.add(attr);
     }
@@ -350,6 +369,7 @@ allLocation.values().forEach(function(location){
 	var count = findMulti.length
 
 	if(count > 1){		
+		console.log(location)
 		var locationdata = location.split('-')
 		var multidata = data.filter(function(d){return (d.attributes.current_status == locationdata[0]) && (d.relationships.stop.data.id == locationdata[1]) && (d.attributes.direction_id == locationdata[2])})
 		//hidden the multiple trains
@@ -359,31 +379,38 @@ allLocation.values().forEach(function(location){
 		// //show multiicon
 		var updatamulti = vehicles
 			.append('g')
-			.attr('id',location).attr('class','multiple')
+			.attr('class','multiple')
 			.attr('transform','translate(' + getXYFromTranslate(findMulti[0])[0] + ',' + getXYFromTranslate(findMulti[0])[1] + ')')
 			.on('click',function(){showVehicle(multidata,arrivalName)})
-			.selectAll('multiple')
+			.selectAll('.multipleimg')
 			.data(multidata)
-			.enter()
-			.append('svg:image')
-				.attr("xlink:href",function(d){return "images/"+ d.relationships.route.data.id + ".png"})
-				.attr('width', vehicleSize)
-			    .attr('height', vehicleSize)
-			    .attr('x', function(d,i){return (locationdata[2] == 0? -1 : 1) * i * vehicleSize - vehicleSize / 2})
-			    .attr('y', -vehicleSize / 2)
+		var entermulti = updatamulti.enter()
+			.append('g')
+			.attr('transform',function(d,i){return 'translate(' + ((locationdata[2] == 0? -1 : 1) * i * vehicleSize - vehicleSize / 2) + ','+ -vehicleSize / 2 + ')'})
+			.attr('class',function(d){return 'multipleimg train' + d.id + (d.id == ishighlight ? ' highlight' : '')})
+		entermulti.append('svg:image')
+			.attr("xlink:href",function(d){return "images/"+ d.relationships.route.data.id + ".png"})
+			.attr('width', vehicleSize)
+		    .attr('height', vehicleSize)
+		entermulti.insert('rect','image')
+			.attr('width',function(d){return d3.select(this.parentNode).node().getBBox().width})
+			.attr('height',highlightBGHeight)
+			.style('fill','none')
+			.attr('y',-3)
+			.attr('class',function(d){return d3.select(this.parentNode).node().className.baseVal.includes('highlight')? 'highlightBG' : ''})
+		updatamulti.merge(updatamulti)
+			.attr('transform','translate(' + getXYFromTranslate(findMulti[0])[0] + ',' + getXYFromTranslate(findMulti[0])[1] + ')')
+
 	}
 })
 }
 //show vehicle's information when click on the icon of it
 function showVehicle(data,arrivalName){
-	//remove the highlight if it is highlight
-	var findHighlight = document.querySelector('.highlight')
-	if(findHighlight){
-		var highlightVehicle = findHighlight.parentNode.id;
-		if(data.map(function(d){return 'train'+d.id}).includes(highlightVehicle)){
-			removeHighlight()
-		}
+
+	if(data.filter(function(d){return d.id == ishighlight})){
+		removeHighlight()
 	}
+
 	//open the dismiss area when open the search/alerts
 	dismiss.classList.remove('hidden');isDismiss = true;
 	vehicleBox.classList.add('openBox');

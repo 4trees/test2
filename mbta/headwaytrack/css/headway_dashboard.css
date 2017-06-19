@@ -148,14 +148,14 @@ h1,h2,h3,h4,h5{
 	margin-right: 1em;
 	margin-bottom: 1em;
 }
-.highlight{
-	fill:#333 !important;
-	stroke-width: .5;
-	stroke:#333;
+
+.highlightBG{	
+    fill: #000 !important;
+    opacity: .6;
+    stroke: #999;
+    stroke-width: 1px;
 }
-/*.highlightBG{	
-	fill:#FBB03B; /* Orange */
-/*}*/
+
 .alertTitle{
 	color:#FBB03B; /* Orange */
 	margin-top: 2.6em;

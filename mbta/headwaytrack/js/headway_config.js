@@ -1,5 +1,5 @@
 //reload the page per 4 hours
-setTimeout(function(){ location.reload(); }, 4*60*60*1000);
+setTimeout(function(){ location.reload()}, 4*60*60*1000);
 
 
 
@@ -17,7 +17,9 @@ var rightLocation = w * .63;
 var bindWidth = w * .03; // for each track
 var interval = 70; // for each stop
 var vehicleSize = 28;
+var highlightBGHeight = vehicleSize + 6;
 var windowHeight = window.innerHeight;
+
 
 
 var detailBox = document.querySelector('#detailBox')
@@ -37,6 +39,7 @@ var isVehicle = false;
 var isDismiss = false;
 var isFullscreen = false;
 var activeContent = '';
+var ishighlight = ''
 //buttons on the top
 alertBt.addEventListener("click", function(){showDetail(alertCT)} );
 searchBt.addEventListener("click", function(){showDetail(searchCT)} );
@@ -86,10 +89,15 @@ function closeDetail(){
 
 }
 function removeHighlight(){
-	var highlight = document.querySelector('.highlight')
+	console.log('hah')
+	var highlight = document.querySelectorAll('.highlightBG')
 	if(highlight){
-		document.querySelector('.highlight').classList.remove('highlight')
-		document.querySelector('.highlightBG').remove()
+		console.log(d3.selectAll('.highlight'))
+		d3.selectAll('.highlight').each(function(d){
+			this.classList.remove('highlight')
+			this.querySelector('.highlightBG').classList.remove('highlightBG')
+		})
+		ishighlight = '';
 	}
 
 }
@@ -98,6 +106,7 @@ function removeHighlight(){
 function updating(err){
 	if(err){
 		document.querySelector('#updating').classList.remove('hidden')
+		document.querySelector('#arrivalTime').innerHTML = 'updating...'
 	}else{
 		document.querySelector('#updating').classList.add('hidden')
 	}
@@ -155,7 +164,11 @@ if (location.search) {
     document.querySelector('#station').innerHTML = selectedOption.nextSibling.textContent.trunc(10);
 }
 
-if(params){isConfig = true}
+if(params){
+	isConfig = true;
+	document.querySelector('#updating').classList.remove('hidden')
+	document.querySelector('#arrivalTime').innerHTML= 'Updating...'
+}
 
 
 //generate the search params
