@@ -529,7 +529,7 @@ var	timing = (d.getHours() >12? -12 : 0 ) + d.getHours() + ' : ' + (d.getMinutes
 }
 function getDate(datestring){
 	var d = new Date(Date.parse(datestring));
-	var date = (d.getMonth()+1) + '/' + d.getDate() + '/' + d.getFullYear() + ' ' + (d.getHours() >12? d.getHours()-12 : d.getHours() ) +  + ':' + (d.getMinutes() <10? '0': '') +d.getMinutes() + (d.getHours() >=12? ' PM':' AM');
+	var date = (d.getMonth()+1) + '/' + d.getDate() + '/' + d.getFullYear() + ' ' + (+d.getHours() >12? +d.getHours()-12 : d.getHours() )  + ':' + (+d.getMinutes() <10? '0': '') +d.getMinutes() + (d.getHours() >=12? ' PM':' AM');
 	return date
 }
 
