@@ -277,6 +277,6 @@ p #nextArrivals{
 
 .scroll::-webkit-scrollbar-thumb{
 	background-color:#666;
-	opacity: .6
+	opacity: .6;
 	border:none;
 }

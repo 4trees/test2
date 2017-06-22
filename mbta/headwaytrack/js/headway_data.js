@@ -349,8 +349,8 @@ merge.select('text')
 	.style('text-anchor',function(d){return d.attributes.direction_id == 0? 'end' : 'start'})
 merge.select('rect')
 	.attr('transform',function(d){
-		let textSize = d3.select(this.parentNode).select('text').node().getBBox();
-		return 'translate('+ ((d.attributes.direction_id == 0 ?(-textSize.width -vehicleSize +3) : -vehicleSize/2 -3) ) + ',' +( textSize.y - highlightBGHeight + vehicleSize) + ')'
+		var textSize = d3.select(this.parentNode).select('text').node().getBBox();
+		return 'translate('+ (d.attributes.direction_id == 0 ?(-textSize.width -vehicleSize +3) : -vehicleSize/2 -3) + ',' +( textSize.y - highlightBGHeight + vehicleSize) + ')'
 	})
 update.exit().remove();
 }
