@@ -116,7 +116,7 @@ app.controller('hdwyCtrl',function($scope, $http, $interval) {
 							var trainlabel = getServerResult[0].attributes.label;
 							var line = getServerResult[0].relationships.route.data.id;
 							var direction = getServerResult[0].attributes.direction_id ? 'westbound' : 'eastbound';
-							var status = getServerResult[0].attributes.current_status == 'INCOMING_AT'? 'approaching ' : 'at ';
+							var status = getServerResult[0].attributes.current_status == 'INCOMING_AT' || getServerResult[0].attributes.current_status == 'IN_TRANSIT_TO' ? 'approaching ' : 'at ';
 							var station = getStops.find(function(d){return d.id == getServerResult[0].relationships.stop.data.id}).attributes.name;
 							d3.select('#searchRT').html('<hr><p class=\'lead\'>Train ' + trainlabel + ' is on ' + line + ' ' + direction + ' ' + status + ' ' + station + '.</p>')
 						}else{
@@ -296,7 +296,7 @@ var enter = update.enter()
 		var Y = station[1];
 		var X = d.attributes.direction_id == 1 ? (rightLocation + 2 * bindWidth) : (leftLocation - 1 * bindWidth);
 		var offsetY = offsetX = 0;
-		if(d.attributes.current_status == 'INCOMING_AT'){
+		if(d.attributes.current_status == 'INCOMING_AT' || d.attributes.current_status == 'IN_TRANSIT_TO'){
 			//check if the train is turning around at a terminal stop
 			var ifToTerminal = terminals.find(function(t){return t.stop_id == d.relationships.stop.data.id})
 			if(ifToTerminal && (ifToTerminal.direction_id != d.attributes.direction_id)){
@@ -332,7 +332,7 @@ var merge = update.merge(enter)
 		var Y = station[1];
 		var X = d.attributes.direction_id == 1? (rightLocation + 2 * bindWidth) : (leftLocation - 1 * bindWidth);
 		var offsetY = offsetX = 0;
-		if(d.attributes.current_status == 'INCOMING_AT'){
+		if(d.attributes.current_status == 'INCOMING_AT' || d.attributes.current_status == 'IN_TRANSIT_TO'){
 			//check if the train is turning around at a terminal stop
 			var ifToTerminal = terminals.find(function(t){return t.stop_id == d.relationships.stop.data.id})
 			if(ifToTerminal && (ifToTerminal.direction_id != d.attributes.direction_id)){
@@ -349,8 +349,8 @@ merge.select('text')
 	.style('text-anchor',function(d){return d.attributes.direction_id == 0? 'end' : 'start'})
 merge.select('rect')
 	.attr('transform',function(d){
-		var textSize = d3.select(this.parentNode).select('text').node().getBBox();
-		return 'translate('+ (d.attributes.direction_id == 0 ?(-textSize.width -vehicleSize +3) : -vehicleSize/2 -3) + ',' +( textSize.y - highlightBGHeight + vehicleSize) + ')'
+		let textSize = d3.select(this.parentNode).select('text').node().getBBox();
+		return 'translate('+ ((d.attributes.direction_id == 0 ?(-textSize.width -vehicleSize +3) : -vehicleSize/2 -3) ) + ',' +( textSize.y - highlightBGHeight + vehicleSize) + ')'
 	})
 update.exit().remove();
 }
@@ -438,7 +438,7 @@ function showArrivalVehicles(nextarrivals,allStops){
 		document.querySelector('#arrivalLocation').innerHTML = 
 			nextarrivals.map(function(arrival) {
 			var name = allStops.find(function(d){return d.id == arrival.parent_station}).name;
-    		return  '<div class=\"col-xs-4 col-sm-4 col-md-4 col-lg-4\"><p><span class=\"text-darker\">' + (arrival.attributes.current_status == 'INCOMING_AT'? 'approaching ' : 'at ' ) + '</span><span>' + name + '</span></p></div>'
+    		return  '<div class=\"col-xs-4 col-sm-4 col-md-4 col-lg-4\"><p><span class=\"text-darker\">' + (arrival.attributes.current_status == 'INCOMING_AT' || arrival.attributes.current_status == 'IN_TRANSIT_TO' ? 'approaching ' : 'at ' ) + '</span><span>' + name + '</span></p></div>'
     	}).join('');
 	}
 }
@@ -529,7 +529,7 @@ var	timing = (d.getHours() >12? -12 : 0 ) + d.getHours() + ' : ' + (d.getMinutes
 }
 function getDate(datestring){
 	var d = new Date(Date.parse(datestring));
-	var date = (d.getMonth()+1) + '/' + d.getDate() + '/' + d.getFullYear() + ' ' + (+d.getHours() >12? +d.getHours()-12 : d.getHours() )  + ':' + (+d.getMinutes() <10? '0': '') +d.getMinutes() + (d.getHours() >=12? ' PM':' AM');
+	var date = (d.getMonth()+1) + '/' + d.getDate() + '/' + d.getFullYear() + ' ' + (d.getHours() >12? d.getHours()-12 : d.getHours() ) +  ':' + (d.getMinutes() <10? '0': '') +d.getMinutes() + (d.getHours() >=12? ' PM':' AM');
 	return date
 }
 
