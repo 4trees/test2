@@ -154,10 +154,21 @@ String.prototype.trunc = String.prototype.trunc ||
 
 //get config from url params 
 var params;
+var apiVerstion = '';
 var isConfig = false;
 if (location.search) {
-	//get params from url
-    var params = location.search.substring(1).split('&')[0].split('=')[1]
+	var searchs = location.search.substring(1).split('&')
+	searchs.forEach(function(search){
+		var item = search.split('=')[0];
+		if(item == 'line'){
+			//get params from url
+    		params = search.split('=')[1]
+		}
+		if(item == 'dev'){
+			//get API version
+			apiVerstion = search.split('=')[1] == 1? 'dev.' : ''
+		}
+	})
     //set value to config form
     var selectedOption = document.querySelector('[value=' + params+']')
     selectedOption.checked = true;
@@ -173,7 +184,7 @@ if(params){
 
 //generate the search params
 function paramsToS(params){
-	var searchParams = 'line=' + params;
+	var searchParams = 'dev=0&line=' + params;
 	return searchParams
 }
 

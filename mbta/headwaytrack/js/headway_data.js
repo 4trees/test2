@@ -1,11 +1,11 @@
 
 // URL globals
-var stopsurl = "https://api.mbtace.com/stops?route=",
-vehiclesurl = "https://api.mbtace.com/vehicles?route=",
-predictionsurl = "https://api.mbtace.com/predictions?route=Green-B,Green-C,Green-D,Green-E",
+var stopsurl = `https://${apiVerstion}api.mbtace.com/stops?route=`,
+vehiclesurl = `https://${apiVerstion}api.mbtace.com/vehicles?route=`,
+predictionsurl = `https://${apiVerstion}api.mbtace.com/predictions?route=Green-B,Green-C,Green-D,Green-E`,
 // tripsurl = "https://api.mbtace.com/trips?route=",
-alerturl = "https://api.mbtace.com/alerts?route=",
-allvehicleurl = "https://api.mbtace.com/vehicles?route=Green-B,Green-C,Green-D,Green-E&include=stop";
+alerturl = `https://${apiVerstion}api.mbtace.com/alerts?route=`,
+allvehicleurl = `https://${apiVerstion}api.mbtace.com/vehicles?route=Green-B,Green-C,Green-D,Green-E&include=stop`;
 
 
 var app = angular.module('hdwyApp', []);
@@ -349,7 +349,7 @@ merge.select('text')
 	.style('text-anchor',function(d){return d.attributes.direction_id == 0? 'end' : 'start'})
 merge.select('rect')
 	.attr('transform',function(d){
-		let textSize = d3.select(this.parentNode).select('text').node().getBBox();
+		var textSize = d3.select(this.parentNode).select('text').node().getBBox();
 		return 'translate('+ ((d.attributes.direction_id == 0 ?(-textSize.width -vehicleSize +3) : -vehicleSize/2 -3) ) + ',' +( textSize.y - highlightBGHeight + vehicleSize) + ')'
 	})
 update.exit().remove();
