@@ -39,13 +39,15 @@ app.controller('hdwyCtrl', function($scope, $http, $interval) {
                         plot.attr('width', w)
                             .attr('height', h - m.t - m.b)
                         //draw stations
+
                         drawStation($scope.stops)
                         //scroll page       
                         var moveY = getXYFromTranslate(d3.select('.place-' + configs[2])._groups[0][0])[1]
                         window.scrollTo(0, moveY - windowHeight / 2)
                     } else {
                         console.log('get 4 lines')
-                        $http.get(stopsurl + 'Green-B')
+                        //$http.get(stopsurl + 'Green-B') change to 'Green-C' as below
+                        $http.get(stopsurl + 'Green-C')
                             .then(function(truncRes) {
                                 console.log(truncRes.data.data)
                                 var kenmore = truncRes.data.data.map(function(d) { return d.id }).indexOf('place-kencl')
@@ -276,6 +278,7 @@ function getTripId(data) {
 
 //draw routes
 function drawRoutes(position, length) {
+    console.log(length)
     var location = position == 'right' ? rightLocation : leftLocation;
     //green routes
     if (!line.select('.' + position).node()) {
@@ -312,7 +315,7 @@ function drawRoutes(position, length) {
 //draw stations on the routes on main diagram
 function drawStation(data) {
     data.reverse();
-    
+    console.log(data)
     //draw station and route based on dirction
     var length = data.length;
     drawRoutes('right', length)
